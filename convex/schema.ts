@@ -393,6 +393,8 @@ export default defineSchema({
     maxAttendees: v.optional(v.number()),
     registrationDeadline: v.optional(v.number()),
     isPublic: v.boolean(),
+    fee: v.optional(v.number()),
+    isFree: v.optional(v.boolean()),
     registrationCount: v.optional(v.number()),
     status: v.optional(v.string()),
     createdAt: v.number(),
@@ -410,7 +412,8 @@ export default defineSchema({
     eventId: v.id("events"),
     userId: v.id("users"),
     collegeId: v.id("colleges"),
-    status: v.union(v.literal("registered"), v.literal("attended"), v.literal("cancelled")),
+    status: v.union(v.literal("registered"), v.literal("waitlisted"), v.literal("attended"), v.literal("cancelled")),
+    paymentStatus: v.optional(v.union(v.literal("free"), v.literal("pending"), v.literal("paid"))),
     registeredAt: v.number(),
     cancelledAt: v.optional(v.number()),
     notes: v.optional(v.string()),
@@ -420,7 +423,8 @@ export default defineSchema({
     .index("by_userId", ["userId"])
     .index("by_collegeId", ["collegeId"])
     .index("by_eventId_userId", ["eventId", "userId"])
-    .index("by_userId_status", ["userId", "status"]),
+    .index("by_userId_status", ["userId", "status"])
+    .index("by_eventId_status", ["eventId", "status"]),
 
   books: defineTable({
     title: v.string(),
@@ -513,6 +517,9 @@ export default defineSchema({
     score: v.number(),
     rank: v.optional(v.number()),
     badges: v.optional(v.array(v.string())),
+    isAnonymous: v.optional(v.boolean()),
+    eventId: v.optional(v.id("events")),
+    metadata: v.optional(v.any()),
     verifiedAt: v.optional(v.number()),
     status: v.optional(v.string()),
     createdAt: v.number(),
@@ -521,7 +528,8 @@ export default defineSchema({
     .index("by_collegeId", ["collegeId"])
     .index("by_collegeId_skillName", ["collegeId", "skillName"])
     .index("by_collegeId_score", ["collegeId", "score"])
-    .index("by_userId_skillName", ["userId", "skillName"]),
+    .index("by_userId_skillName", ["userId", "skillName"])
+    .index("by_eventId", ["eventId"]),
 
   rewards: defineTable({
     userId: v.id("users"),
