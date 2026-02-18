@@ -138,6 +138,31 @@ export const getUsersByBranch = query({
   },
 });
 
+export const updateUser = mutation({
+  args: {
+    clerkUserId: v.string(),
+    name: v.optional(v.string()),
+    branch: v.optional(v.string()),
+    year: v.optional(v.number()),
+    phone: v.optional(v.string()),
+    avatarUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const auth = await getAuth(ctx, args.clerkUserId);
+    const userId = requireAuth(auth);
+
+    const updates: Record<string, unknown> = { updatedAt: Date.now() };
+    if (args.name !== undefined) updates.name = args.name;
+    if (args.branch !== undefined) updates.branch = args.branch;
+    if (args.year !== undefined) updates.year = args.year;
+    if (args.phone !== undefined) updates.phone = args.phone;
+    if (args.avatarUrl !== undefined) updates.avatarUrl = args.avatarUrl;
+
+    await ctx.db.patch(userId, updates);
+    return userId;
+  },
+});
+
 export const deactivateUser = mutation({
   args: {
     clerkUserId: v.string(),
