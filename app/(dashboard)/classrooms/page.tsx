@@ -3,9 +3,11 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { BookClassroomModal } from "@/components/modals/BookClassroomModal";
 import { 
   Search, 
   MapPin, 
@@ -52,6 +54,8 @@ export default function ClassroomsPage() {
   const [selectedStartTime, setSelectedStartTime] = useState("09:00");
   const [selectedEndTime, setSelectedEndTime] = useState("10:00");
   const [showFilters, setShowFilters] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(null);
 
   const currentUser = useQuery(
     api.users.getUser,
@@ -106,8 +110,9 @@ export default function ClassroomsPage() {
     return `${displayHour}:${minutes} ${ampm}`;
   };
 
-  const handleBookClassroom = async (classroomId: string) => {
-    console.log("Booking classroom:", classroomId);
+  const handleBookClassroom = (classroom: Classroom) => {
+    setSelectedClassroom(classroom);
+    setShowBookingModal(true);
   };
 
   if (!user) {
@@ -288,7 +293,7 @@ export default function ClassroomsPage() {
                 variant="primary"
                 size="sm"
                 className="w-full"
-                onClick={() => handleBookClassroom(classroom._id)}
+                onClick={() => handleBookClassroom(classroom as Classroom)}
               >
                 <Calendar className="w-4 h-4 mr-2" />
                 Book Room
@@ -338,6 +343,33 @@ export default function ClassroomsPage() {
             ))}
           </div>
         </div>
+      )}
+
+      {selectedClassroom && (
+        <BookClassroomModal
+          isOpen={showBookingModal}
+          onClose={() => {
+            setShowBookingModal(false);
+            setSelectedClassroom(null);
+          }}
+          classroom={selectedClassroom}
+          collegeId={currentUser?.collegeId as Id<"colleges">}
+          clerkUserId={user!.id}
+          selectedDate={(() => {
+            const today = new Date();
+            const currentDay = today.getDay();
+            const diff = selectedDay - currentDay;
+            const targetDate = new Date(today);
+            targetDate.setDate(today.getDate() + diff);
+            return targetDate.toISOString().split("T")[0];
+          })()}
+          selectedStartTime={selectedStartTime}
+          selectedEndTime={selectedEndTime}
+          onSuccess={() => {
+            setShowBookingModal(false);
+            setSelectedClassroom(null);
+          }}
+        />
       )}
     </div>
   );

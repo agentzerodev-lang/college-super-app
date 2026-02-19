@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ResourceCard } from "@/components/features/ResourceCard";
+import { UploadResourceModal } from "@/components/modals/UploadResourceModal";
 import { 
   Search, 
   Filter, 
@@ -259,24 +260,15 @@ export default function ResourcesPage() {
         </div>
       )}
 
-      {showUploadModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-md m-4 p-6">
-            <h3 className="text-lg font-semibold mb-4">Upload Resource</h3>
-            <p className="text-slate-500 dark:text-slate-400 mb-4">
-              Upload modal placeholder - implement form here
-            </p>
-            <div className="flex gap-2">
-              <Button variant="secondary" onClick={() => setShowUploadModal(false)} className="flex-1">
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={() => setShowUploadModal(false)} className="flex-1">
-                Upload
-              </Button>
-            </div>
-          </Card>
-        </div>
-      )}
+      <UploadResourceModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        collegeId={currentUser?.collegeId as Id<"colleges">}
+        clerkUserId={user!.id}
+        onSuccess={() => {
+          setShowUploadModal(false);
+        }}
+      />
     </div>
   );
 }
