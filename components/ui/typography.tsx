@@ -13,8 +13,7 @@ interface TypographyProps extends HTMLAttributes<HTMLElement> {
 
 function createTypographyComponent(
   defaultTag: ElementType,
-  defaultClassName: string,
-  displayName: string
+  defaultClassName: string
 ) {
   return forwardRef<HTMLElement, TypographyProps>(function Component(
     { as: Tag = defaultTag, className, animate = false, delay = 0, children, ...props },
@@ -44,38 +43,32 @@ function createTypographyComponent(
 
 export const H1 = createTypographyComponent(
   "h1",
-  "text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white",
-  "H1"
+  "text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white"
 );
 
 export const H2 = createTypographyComponent(
   "h2",
-  "text-3xl md:text-4xl font-bold tracking-tight text-white",
-  "H2"
+  "text-3xl md:text-4xl font-bold tracking-tight text-white"
 );
 
 export const H3 = createTypographyComponent(
   "h3",
-  "text-2xl md:text-3xl font-semibold tracking-tight text-white",
-  "H3"
+  "text-2xl md:text-3xl font-semibold tracking-tight text-white"
 );
 
 export const H4 = createTypographyComponent(
   "h4",
-  "text-xl md:text-2xl font-semibold text-white",
-  "H4"
+  "text-xl md:text-2xl font-semibold text-white"
 );
 
 export const H5 = createTypographyComponent(
   "h5",
-  "text-lg md:text-xl font-medium text-white",
-  "H5"
+  "text-lg md:text-xl font-medium text-white"
 );
 
 export const H6 = createTypographyComponent(
   "h6",
-  "text-base md:text-lg font-medium text-slate-200",
-  "H6"
+  "text-base md:text-lg font-medium text-slate-200"
 );
 
 export const Text = forwardRef<

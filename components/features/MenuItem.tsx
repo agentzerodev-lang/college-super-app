@@ -74,6 +74,7 @@ export function MenuItem({
       <div className="flex gap-3 p-3">
         {imageUrl ? (
           <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-700 shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageUrl}
               alt={name}

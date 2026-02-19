@@ -7,14 +7,10 @@ import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { 
-  Calendar,
   Clock,
   Users,
-  Filter,
   Dumbbell,
   MapPin,
-  CheckCircle2,
-  XCircle,
   Loader2
 } from "lucide-react";
 

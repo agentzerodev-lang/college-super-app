@@ -97,6 +97,7 @@ export default function ProfilePage() {
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-shrink-0">
             {user.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={user.imageUrl}
                 alt={currentUser.name}

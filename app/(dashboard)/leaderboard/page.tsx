@@ -11,7 +11,6 @@ import {
   Trophy,
   Medal,
   Crown,
-  Filter,
   Search,
   Eye,
   EyeOff,
@@ -24,7 +23,6 @@ import {
 export default function LeaderboardPage() {
   const { user } = useUser();
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"overall" | "skill">("overall");
 

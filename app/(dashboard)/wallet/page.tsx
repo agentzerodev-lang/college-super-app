@@ -1,11 +1,10 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { 
   Wallet,
   ArrowUpRight,
@@ -22,11 +21,6 @@ export default function WalletPage() {
   const { user } = useUser();
   const [activeTab, setActiveTab] = useState<"overview" | "transactions" | "rewards">("overview");
 
-  const currentUser = useQuery(
-    api.users.getUser,
-    user?.id ? { clerkUserId: user.id } : "skip"
-  );
-
   const wallet = useQuery(
     api.wallet.getWallet,
     { clerkUserId: user?.id || "" }
@@ -41,8 +35,6 @@ export default function WalletPage() {
     api.wallet.getUserRewards,
     { clerkUserId: user?.id || "" }
   );
-
-  const isAdmin = currentUser?.role === "admin";
 
   const getCategoryIcon = (category: string) => {
     const icons: Record<string, string> = {

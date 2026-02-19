@@ -12,7 +12,6 @@ import { AddBookModal } from "@/components/modals/AddBookModal";
 import { 
   Book,
   Search,
-  Filter,
   Bookmark,
   Clock,
   AlertCircle,

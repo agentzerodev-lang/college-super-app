@@ -3,7 +3,7 @@
 import { 
   Home, Search, User, LogOut, Moon, Sun,
   Calendar, BookOpen, AlertTriangle, UtensilsCrossed,
-  Building2, Trophy, Wallet, Library, CalendarClock, Settings, ChevronLeft, ChevronRight
+  Building2, Trophy, Wallet, Library, CalendarClock, ChevronLeft, ChevronRight
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

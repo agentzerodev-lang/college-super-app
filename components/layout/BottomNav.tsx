@@ -27,7 +27,7 @@ export function BottomNav() {
       <div className="mx-4 mb-4">
         <div className="backdrop-blur-2xl bg-dark-900/90 border border-white/10 rounded-2xl shadow-glass-lg">
           <div className="flex justify-around items-center h-16">
-            {navItems.map((item, index) => {
+            {navItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
               const Icon = item.icon;
               

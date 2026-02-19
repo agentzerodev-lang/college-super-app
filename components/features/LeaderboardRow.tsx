@@ -5,7 +5,6 @@ import {
   Trophy, 
   Medal, 
   Crown,
-  Star,
   Eye,
   EyeOff
 } from "lucide-react";
@@ -55,7 +54,7 @@ function getRankBg(rank: number) {
 
 export function LeaderboardRow({
   rank,
-  userId,
+  userId: _userId,
   displayName,
   isAnonymous = false,
   score,
@@ -67,7 +66,7 @@ export function LeaderboardRow({
   isCurrentUser = false,
   verifiedAt,
   onToggleGhostMode,
-  onViewProfile,
+  onViewProfile: _onViewProfile,
 }: LeaderboardRowProps) {
   const displayScore = totalScore ?? score;
 

@@ -2,7 +2,7 @@
 
 import { motion, type HTMLMotionProps } from "framer-motion";
 import { forwardRef } from "react";
-import { spring, cardHover } from "./variants";
+import { spring } from "./variants";
 
 interface AnimatedCardProps extends HTMLMotionProps<"div"> {
   tilt?: boolean;
@@ -11,7 +11,7 @@ interface AnimatedCardProps extends HTMLMotionProps<"div"> {
 }
 
 export const AnimatedCard = forwardRef<HTMLDivElement, AnimatedCardProps>(
-  ({ children, className, tilt = true, glow = false, hoverScale = 1.02, ...props }, ref) => {
+  ({ children, className, tilt: _tilt = true, glow: _glow = false, hoverScale = 1.02, ...props }, ref) => {
     return (
       <motion.div
         ref={ref}
@@ -40,7 +40,7 @@ interface AnimatedButtonProps extends HTMLMotionProps<"button"> {
 }
 
 export const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>(
-  ({ children, className, glowOnHover = false, ...props }, ref) => {
+  ({ children, className, glowOnHover: _glowOnHover = false, ...props }, ref) => {
     return (
       <motion.button
         ref={ref}

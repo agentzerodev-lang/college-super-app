@@ -10,8 +10,6 @@ import { TicketCard } from "@/components/features/TicketCard";
 import { CreateTicketModal } from "@/components/modals/CreateTicketModal";
 import { Id } from "@/convex/_generated/dataModel";
 import {
-  Ticket,
-  Filter,
   Plus,
   Search,
   Loader2,

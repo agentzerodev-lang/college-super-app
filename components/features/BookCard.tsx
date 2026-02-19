@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button, IconButton } from "@/components/ui/button-new";
+import { Button } from "@/components/ui/button-new";
 import { cn } from "@/lib/utils";
 import { spring } from "@/components/motion/variants";
 import { 
@@ -82,6 +82,7 @@ export function BookCard({
           className="w-20 h-28 md:w-24 md:h-32 rounded-xl overflow-hidden bg-dark-700/50 shrink-0 border border-white/5"
         >
           {imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={imageUrl}
               alt={title}

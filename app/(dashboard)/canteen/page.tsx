@@ -11,7 +11,6 @@ import {
   Coffee, 
   ShoppingBag, 
   Clock,
-  Filter,
   Store,
   Search,
   IndianRupee,

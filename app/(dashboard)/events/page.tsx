@@ -11,7 +11,6 @@ import { EventCard } from "@/components/features/EventCard";
 import { CreateEventModal } from "@/components/modals/CreateEventModal";
 import { 
   Calendar as CalendarIcon,
-  Filter,
   Plus,
   Search,
   Ticket,
