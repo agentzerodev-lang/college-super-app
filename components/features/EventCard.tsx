@@ -51,7 +51,7 @@ const typeVariants = {
 };
 
 export function EventCard({
-  id: _id,
+  id,
   title,
   description,
   type,

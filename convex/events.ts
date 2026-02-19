@@ -8,7 +8,7 @@ export const createEvent = mutation({
     title: v.string(),
     description: v.string(),
     collegeId: v.optional(v.id("colleges")),
-    type: v.union(
+    type: v.optional(v.union(
       v.literal("academic"),
       v.literal("cultural"),
       v.literal("sports"),
@@ -16,7 +16,7 @@ export const createEvent = mutation({
       v.literal("seminar"),
       v.literal("competition"),
       v.literal("other")
-    ),
+    )),
     startTime: v.number(),
     endTime: v.number(),
     location: v.optional(v.string()),
@@ -40,7 +40,7 @@ export const createEvent = mutation({
       collegeId: args.collegeId,
       creatorId: userId,
       creatorName: auth.user?.name,
-      type: args.type,
+      type: args.type ?? "other",
       startTime: args.startTime,
       endTime: args.endTime,
       location: args.location,
@@ -141,7 +141,7 @@ export const getByCollege = query({
 
 export const searchEvents = query({
   args: {
-    collegeId: v.id("colleges"),
+    collegeId: v.optional(v.id("colleges")),
     searchTerm: v.string(),
     clerkUserId: v.string(),
     type: v.optional(v.union(
@@ -158,6 +158,26 @@ export const searchEvents = query({
     requireAuth(await getAuth(ctx, args.clerkUserId));
     
     const eventType = args.type;
+    const searchTerm = args.searchTerm.toLowerCase();
+
+    // If no collegeId (hackathon mode), search all events
+    if (!args.collegeId) {
+      const allEvents = await ctx.db
+        .query("events")
+        .filter((q) => q.eq(q.field("status"), "active"))
+        .collect();
+      
+      let filtered = allEvents.filter((e) => 
+        e.title.toLowerCase().includes(searchTerm) ||
+        e.description?.toLowerCase().includes(searchTerm)
+      );
+
+      if (eventType) {
+        filtered = filtered.filter((e) => e.type === eventType);
+      }
+
+      return filtered.slice(0, 20);
+    }
 
     if (eventType) {
       return await ctx.db
