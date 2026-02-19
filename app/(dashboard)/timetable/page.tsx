@@ -117,7 +117,7 @@ export default function TimetablePage() {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs font-medium">
-                  {nextClass.isToday ? "Today" : `In ${nextClass.daysUntil} day${nextClass.daysUntil > 1 ? "s" : ""}`}
+                  {nextClass.isToday ? "Today" : `In ${'daysUntil' in nextClass ? nextClass.daysUntil : 1} day${'daysUntil' in nextClass && nextClass.daysUntil > 1 ? "s" : ""}`}
                 </span>
               </div>
               <h3 className="text-xl font-semibold">
@@ -132,10 +132,10 @@ export default function TimetablePage() {
                   <MapPin className="w-4 h-4" />
                   {nextClass.classroom?.name || "TBA"}, {nextClass.classroom?.building || ""}
                 </span>
-                {currentUser?.role !== "faculty" && nextClass.faculty && (
+                {currentUser?.role !== "faculty" && (nextClass as { faculty?: { name: string } }).faculty && (
                   <span className="flex items-center gap-1">
                     <User className="w-4 h-4" />
-                    {nextClass.faculty.name}
+                    {(nextClass as { faculty?: { name: string } }).faculty?.name}
                   </span>
                 )}
               </div>
