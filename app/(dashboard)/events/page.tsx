@@ -3,6 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
@@ -23,6 +24,8 @@ export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showOnlyUpcoming, setShowOnlyUpcoming] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<any>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
   const currentUser = useQuery(
     api.users.getUser,
@@ -48,6 +51,8 @@ export default function EventsPage() {
 
   const register = useMutation(api.events.register);
   const cancelRegistration = useMutation(api.events.cancelRegistration);
+  const deleteEvent = useMutation(api.events.deleteEvent);
+  const updateEvent = useMutation(api.events.updateEvent);
 
   const eventTypes = [
     { id: "academic", label: "Academic", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" },
@@ -84,6 +89,23 @@ export default function EventsPage() {
       clerkUserId: user!.id,
       eventId: eventId as any,
     });
+  };
+
+  const handleEdit = (event: any) => {
+    setEditingEvent(event);
+  };
+
+  const handleDelete = async (eventId: string) => {
+    try {
+      await deleteEvent({
+        clerkUserId: user!.id,
+        eventId: eventId as Id<"events">,
+      });
+      setShowDeleteConfirm(null);
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+      alert("Failed to delete event. Please try again.");
+    }
   };
 
   if (!user) {
@@ -225,9 +247,13 @@ export default function EventsPage() {
                 registrationCount={event.registrationCount}
                 isRegistered={isRegisteredForEvent(event._id)}
                 isPublic={event.isPublic}
+                creatorId={event.creatorId}
                 creatorName={event.creatorName}
+                currentUserId={currentUser?._id}
                 onRegister={() => handleRegister(event._id)}
                 onCancelRegistration={() => handleCancelRegistration(event._id)}
+                onEdit={() => handleEdit(event)}
+                onDelete={() => setShowDeleteConfirm(event._id)}
               />
             ))}
           </div>
@@ -252,6 +278,36 @@ export default function EventsPage() {
         onSuccess={() => {
         }}
       />
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+              Delete Event
+            </h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-4">
+              Are you sure you want to delete this event? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="secondary"
+                onClick={() => setShowDeleteConfirm(null)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => handleDelete(showDeleteConfirm)}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+              >
+                Delete
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

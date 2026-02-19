@@ -10,7 +10,9 @@ import {
   Users, 
   Clock,
   Tag,
-  ExternalLink
+  ExternalLink,
+  Edit,
+  Trash2
 } from "lucide-react";
 
 interface EventCardProps {
@@ -27,11 +29,15 @@ interface EventCardProps {
   registrationCount?: number;
   isRegistered?: boolean;
   isPublic?: boolean;
+  creatorId?: string;
   creatorName?: string;
   fee?: number;
+  currentUserId?: string;
   onRegister?: () => void;
   onViewDetails?: () => void;
   onCancelRegistration?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 const typeVariants = {
@@ -45,6 +51,7 @@ const typeVariants = {
 };
 
 export function EventCard({
+  id,
   title,
   description,
   type,
@@ -56,12 +63,17 @@ export function EventCard({
   maxAttendees,
   registrationCount = 0,
   isRegistered = false,
+  creatorId,
   creatorName,
   fee,
+  currentUserId,
   onRegister,
   onViewDetails,
   onCancelRegistration,
+  onEdit,
+  onDelete,
 }: EventCardProps) {
+  const isCreator = creatorId && currentUserId && creatorId === currentUserId;
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleDateString("en-US", {
       weekday: "short",
@@ -232,6 +244,23 @@ export function EventCard({
             </Button>
           )}
         </div>
+
+        {isCreator && (
+          <div className="flex gap-2 mt-3 pt-3 border-t border-white/10">
+            {onEdit && (
+              <Button onClick={onEdit} variant="glass" size="sm" className="flex-1">
+                <Edit className="w-4 h-4 mr-1" />
+                Edit
+              </Button>
+            )}
+            {onDelete && (
+              <Button onClick={onDelete} variant="danger" size="sm" className="flex-1">
+                <Trash2 className="w-4 h-4 mr-1" />
+                Delete
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </motion.div>
   );
