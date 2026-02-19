@@ -13,7 +13,7 @@ import { Id } from "@/convex/_generated/dataModel";
 interface CreateEventModalProps {
   isOpen: boolean;
   onClose: () => void;
-  collegeId: Id<"colleges">;
+  collegeId: Id<"colleges"> | undefined;
   clerkUserId: string;
   onSuccess?: () => void;
 }
@@ -53,6 +53,12 @@ export function CreateEventModal({ isOpen, onClose, collegeId, clerkUserId, onSu
 
     if (endTimestamp <= startTimestamp) {
       setError("End time must be after start time");
+      return;
+    }
+
+    if (!collegeId) {
+      setError("College ID is required. Please complete onboarding.");
+      setIsLoading(false);
       return;
     }
 

@@ -114,7 +114,16 @@ export default function EventsPage() {
             <CalendarIcon className="w-4 h-4 mr-2" />
             {showOnlyUpcoming ? "Upcoming" : "All Events"}
           </Button>
-          <Button variant="primary" onClick={() => setShowCreateModal(true)}>
+          <Button 
+            variant="primary" 
+            onClick={() => {
+              if (!currentUser?.collegeId) {
+                alert("Please complete onboarding first to create events.");
+                return;
+              }
+              setShowCreateModal(true);
+            }}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Create Event
           </Button>
@@ -235,16 +244,14 @@ export default function EventsPage() {
         )}
       </div>
 
-      {currentUser?.collegeId && (
-        <CreateEventModal
-          isOpen={showCreateModal}
-          onClose={() => setShowCreateModal(false)}
-          collegeId={currentUser.collegeId}
-          clerkUserId={user!.id}
-          onSuccess={() => {
-          }}
-        />
-      )}
+      <CreateEventModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        collegeId={currentUser?.collegeId}
+        clerkUserId={user!.id}
+        onSuccess={() => {
+        }}
+      />
     </div>
   );
 }
