@@ -3,7 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -235,14 +235,16 @@ export default function EventsPage() {
         )}
       </div>
 
-      <CreateEventModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        collegeId={currentUser?.collegeId as Id<"colleges">}
-        clerkUserId={user!.id}
-        onSuccess={() => {
-        }}
-      />
+      {currentUser?.collegeId && (
+        <CreateEventModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          collegeId={currentUser.collegeId}
+          clerkUserId={user!.id}
+          onSuccess={() => {
+          }}
+        />
+      )}
     </div>
   );
 }

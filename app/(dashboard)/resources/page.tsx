@@ -260,15 +260,17 @@ export default function ResourcesPage() {
         </div>
       )}
 
-      <UploadResourceModal
-        isOpen={showUploadModal}
-        onClose={() => setShowUploadModal(false)}
-        collegeId={currentUser?.collegeId as Id<"colleges">}
-        clerkUserId={user!.id}
-        onSuccess={() => {
-          setShowUploadModal(false);
-        }}
-      />
+      {currentUser?.collegeId && (
+        <UploadResourceModal
+          isOpen={showUploadModal}
+          onClose={() => setShowUploadModal(false)}
+          collegeId={currentUser.collegeId}
+          clerkUserId={user!.id}
+          onSuccess={() => {
+            setShowUploadModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

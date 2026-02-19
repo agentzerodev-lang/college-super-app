@@ -3,7 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -316,15 +316,17 @@ export default function LibraryPage() {
         </>
       )}
 
-      <AddBookModal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        collegeId={currentUser?.collegeId as Id<"colleges">}
-        clerkUserId={user!.id}
-        onSuccess={() => {
-          setShowAddModal(false);
-        }}
-      />
+      {currentUser?.collegeId && (
+        <AddBookModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          collegeId={currentUser.collegeId}
+          clerkUserId={user!.id}
+          onSuccess={() => {
+            setShowAddModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

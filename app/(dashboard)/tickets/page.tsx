@@ -235,15 +235,17 @@ export default function TicketsPage() {
         )}
       </div>
 
-      <CreateTicketModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        collegeId={currentUser?.collegeId as Id<"colleges">}
-        clerkUserId={user!.id}
-        onSuccess={() => {
-          setShowCreateModal(false);
-        }}
-      />
+      {currentUser?.collegeId && (
+        <CreateTicketModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          collegeId={currentUser.collegeId}
+          clerkUserId={user!.id}
+          onSuccess={() => {
+            setShowCreateModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

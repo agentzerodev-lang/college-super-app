@@ -3,7 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -345,7 +345,7 @@ export default function ClassroomsPage() {
         </div>
       )}
 
-      {selectedClassroom && (
+      {selectedClassroom && currentUser?.collegeId && (
         <BookClassroomModal
           isOpen={showBookingModal}
           onClose={() => {
@@ -353,7 +353,7 @@ export default function ClassroomsPage() {
             setSelectedClassroom(null);
           }}
           classroom={selectedClassroom}
-          collegeId={currentUser?.collegeId as Id<"colleges">}
+          collegeId={currentUser.collegeId}
           clerkUserId={user!.id}
           selectedDate={(() => {
             const today = new Date();
