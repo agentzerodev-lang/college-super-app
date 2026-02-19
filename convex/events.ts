@@ -7,7 +7,7 @@ export const createEvent = mutation({
     clerkUserId: v.string(),
     title: v.string(),
     description: v.string(),
-    collegeId: v.id("colleges"),
+    collegeId: v.optional(v.id("colleges")),
     type: v.union(
       v.literal("academic"),
       v.literal("cultural"),
@@ -71,7 +71,7 @@ export const getEventById = query({
 
 export const getByCollege = query({
   args: {
-    collegeId: v.id("colleges"),
+    collegeId: v.optional(v.id("colleges")),
     clerkUserId: v.string(),
     type: v.optional(v.union(
       v.literal("academic"),
@@ -89,6 +89,27 @@ export const getByCollege = query({
 
     const now = Date.now();
     const eventType = args.type;
+
+    // If no collegeId provided (hackathon mode), get all events
+    if (!args.collegeId) {
+      const allEvents = await ctx.db
+        .query("events")
+        .filter((q) => q.eq(q.field("status"), "active"))
+        .collect();
+      
+      if (eventType) {
+        const filteredByType = allEvents.filter((e) => e.type === eventType);
+        if (args.upcomingOnly) {
+          return filteredByType.filter((e) => e.startTime > now);
+        }
+        return filteredByType;
+      }
+      
+      if (args.upcomingOnly) {
+        return allEvents.filter((e) => e.startTime > now);
+      }
+      return allEvents;
+    }
 
     if (eventType) {
       const events = await ctx.db
@@ -300,7 +321,7 @@ export const register = mutation({
     await ctx.db.insert("eventRegistrations", {
       eventId: args.eventId,
       userId,
-      collegeId: event.collegeId,
+      collegeId: event.collegeId, // Will be undefined if event has no collegeId (hackathon mode)
       status: isWaitlisted ? "waitlisted" : "registered",
       paymentStatus: args.paymentStatus ?? (event.isFree || !event.fee ? "free" : "pending"),
       registeredAt: now,
@@ -589,7 +610,7 @@ export const getRegistrationStats = query({
 
 export const getUpcoming = query({
   args: {
-    collegeId: v.id("colleges"),
+    collegeId: v.optional(v.id("colleges")),
     clerkUserId: v.string(),
     limit: v.optional(v.number()),
   },
@@ -599,6 +620,17 @@ export const getUpcoming = query({
     const now = Date.now();
     const limit = args.limit ?? 10;
 
+    // If no collegeId, get all upcoming events (hackathon mode)
+    if (!args.collegeId) {
+      const allEvents = await ctx.db
+        .query("events")
+        .filter((q) => q.eq(q.field("status"), "active"))
+        .collect();
+      return allEvents
+        .filter((e) => e.startTime > now)
+        .slice(0, limit);
+    }
+
     return await ctx.db
       .query("events")
       .withIndex("by_collegeId_startTime", (q) =>
@@ -606,5 +638,41 @@ export const getUpcoming = query({
       )
       .filter((q) => q.eq(q.field("status"), "active"))
       .take(limit);
+  },
+});
+
+// Get all events without college filter (for hackathon mode)
+export const getAllEvents = query({
+  args: {
+    clerkUserId: v.string(),
+    type: v.optional(v.union(
+      v.literal("academic"),
+      v.literal("cultural"),
+      v.literal("sports"),
+      v.literal("workshop"),
+      v.literal("seminar"),
+      v.literal("competition"),
+      v.literal("other")
+    )),
+    upcomingOnly: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    requireAuth(await getAuth(ctx, args.clerkUserId));
+
+    const now = Date.now();
+    let events = await ctx.db
+      .query("events")
+      .filter((q) => q.eq(q.field("status"), "active"))
+      .collect();
+
+    if (args.type) {
+      events = events.filter((e) => e.type === args.type);
+    }
+
+    if (args.upcomingOnly) {
+      events = events.filter((e) => e.startTime > now);
+    }
+
+    return events;
   },
 });

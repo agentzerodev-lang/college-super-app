@@ -178,3 +178,46 @@ export const deactivateUser = mutation({
     return args.targetUserId;
   },
 });
+
+// Hackathon: Auto-create user for event creation without onboarding
+export const getOrCreateHackathonUser = mutation({
+  args: {
+    clerkUserId: v.string(),
+    email: v.string(),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Check if user already exists
+    const existingUser = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_user_id", (q) => q.eq("clerkUserId", args.clerkUserId))
+      .first();
+
+    if (existingUser) {
+      return existingUser;
+    }
+
+    // Create new user for hackathon (no onboarding required)
+    const now = Date.now();
+    const userId = await ctx.db.insert("users", {
+      clerkUserId: args.clerkUserId,
+      email: args.email,
+      name: args.name,
+      role: "student",
+      status: "active",
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // Create wallet for the user
+    await ctx.db.insert("wallets", {
+      userId,
+      balance: 0,
+      status: "active",
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    return await ctx.db.get(userId);
+  },
+});

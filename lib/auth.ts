@@ -49,14 +49,12 @@ export function useCurrentUser() {
       }
     : null;
 
+  // HACKATHON: Consider users with profile as onboarded (skip onboarding requirement)
   return {
     isLoaded: true,
     user,
     profile,
-    isOnboarded: !!(
-      profile &&
-      user.unsafeMetadata?.onboardingComplete === true
-    ),
+    isOnboarded: !!profile || user.unsafeMetadata?.onboardingComplete === true,
   };
 }
 

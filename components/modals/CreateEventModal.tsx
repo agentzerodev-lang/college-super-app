@@ -56,11 +56,12 @@ export function CreateEventModal({ isOpen, onClose, collegeId, clerkUserId, onSu
       return;
     }
 
-    if (!collegeId) {
-      setError("College ID is required. Please complete onboarding.");
-      setIsLoading(false);
-      return;
-    }
+    // CollegeId is now optional for hackathon mode
+    // if (!collegeId) {
+    //   setError("College ID is required. Please complete onboarding.");
+    //   setIsLoading(false);
+    //   return;
+    // }
 
     setIsLoading(true);
     setError(null);

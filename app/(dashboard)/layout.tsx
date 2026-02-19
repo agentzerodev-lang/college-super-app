@@ -42,9 +42,10 @@ export default function DashboardLayout({
     );
   }
 
-  if (!isOnboarded) {
-    redirect("/onboarding");
-  }
+  // HACKATHON: Allow non-onboarded users to access dashboard
+  // if (!isOnboarded) {
+  //   redirect("/onboarding");
+  // }
 
   if (!role) {
     redirect("/sign-in");

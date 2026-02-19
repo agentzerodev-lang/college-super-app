@@ -373,7 +373,7 @@ export default defineSchema({
   events: defineTable({
     title: v.string(),
     description: v.string(),
-    collegeId: v.id("colleges"),
+    collegeId: v.optional(v.id("colleges")),
     creatorId: v.id("users"),
     creatorName: v.optional(v.string()),
     type: v.union(
@@ -411,7 +411,7 @@ export default defineSchema({
   eventRegistrations: defineTable({
     eventId: v.id("events"),
     userId: v.id("users"),
-    collegeId: v.id("colleges"),
+    collegeId: v.optional(v.id("colleges")),
     status: v.union(v.literal("registered"), v.literal("waitlisted"), v.literal("attended"), v.literal("cancelled")),
     paymentStatus: v.optional(v.union(v.literal("free"), v.literal("pending"), v.literal("paid"))),
     registeredAt: v.number(),

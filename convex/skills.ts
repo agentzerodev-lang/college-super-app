@@ -170,11 +170,21 @@ export const getEventLeaderboard = query({
 
     const limit = args.limit || 50;
 
-    const scores = await ctx.db
-      .query("skillsLeaderboard")
-      .withIndex("by_collegeId_score", (q) => q.eq("collegeId", event.collegeId))
-      .order("desc")
-      .take(limit * 2);
+    // Handle events without collegeId (hackathon mode)
+    let scores;
+    if (event.collegeId) {
+      scores = await ctx.db
+        .query("skillsLeaderboard")
+        .withIndex("by_collegeId_score", (q) => q.eq("collegeId", event.collegeId!))
+        .order("desc")
+        .take(limit * 2);
+    } else {
+      // For hackathon events without collegeId, get all scores
+      scores = await ctx.db
+        .query("skillsLeaderboard")
+        .order("desc")
+        .take(limit * 2);
+    }
 
     const eventScores = scores.filter(s => 
       s.eventId === args.eventId && s.status === "active"

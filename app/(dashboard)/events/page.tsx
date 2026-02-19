@@ -5,7 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { EventCard } from "@/components/features/EventCard";
@@ -20,26 +20,53 @@ import {
 } from "lucide-react";
 
 export default function EventsPage() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showOnlyUpcoming, setShowOnlyUpcoming] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
 
+  // Auto-create user for hackathon (no onboarding required)
+  const getOrCreateHackathonUser = useMutation(api.users.getOrCreateHackathonUser);
+  
   const currentUser = useQuery(
     api.users.getUser,
     user?.id ? { clerkUserId: user.id } : "skip"
   );
 
+  // Auto-create user if not exists (hackathon mode)
+  useEffect(() => {
+    const createUserIfNeeded = async () => {
+      if (user && !currentUser && !isCreatingUser) {
+        setIsCreatingUser(true);
+        try {
+          await getOrCreateHackathonUser({
+            clerkUserId: user.id,
+            email: user.emailAddresses[0]?.emailAddress ?? "",
+            name: user.fullName ?? user.username ?? "Hackathon User",
+          });
+        } catch (err) {
+          console.error("Failed to create hackathon user:", err);
+        } finally {
+          setIsCreatingUser(false);
+        }
+      }
+    };
+
+    createUserIfNeeded();
+  }, [user, currentUser, isCreatingUser, getOrCreateHackathonUser]);
+
+  // Query events - works with or without collegeId (hackathon mode)
   const events = useQuery(
     api.events.getByCollege,
-    currentUser?.collegeId
+    user?.id
       ? {
-          clerkUserId: user!.id,
-          collegeId: currentUser.collegeId,
-          type: selectedType as any,
+          clerkUserId: user.id,
+          collegeId: currentUser?.collegeId, // undefined for hackathon users
+          ...(selectedType ? { type: selectedType as any } : {}),
           upcomingOnly: showOnlyUpcoming,
         }
       : "skip"
@@ -47,13 +74,12 @@ export default function EventsPage() {
 
   const myRegistrations = useQuery(
     api.events.getMyRegistrations,
-    { clerkUserId: user?.id || "" }
+    user?.id ? { clerkUserId: user.id } : "skip"
   );
 
   const register = useMutation(api.events.register);
   const cancelRegistration = useMutation(api.events.cancelRegistration);
   const deleteEvent = useMutation(api.events.deleteEvent);
-  const updateEvent = useMutation(api.events.updateEvent);
 
   const eventTypes = [
     { id: "academic", label: "Academic", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" },
@@ -79,15 +105,17 @@ export default function EventsPage() {
   };
 
   const handleRegister = async (eventId: string) => {
+    if (!user) return;
     await register({
-      clerkUserId: user!.id,
+      clerkUserId: user.id,
       eventId: eventId as any,
     });
   };
 
   const handleCancelRegistration = async (eventId: string) => {
+    if (!user) return;
     await cancelRegistration({
-      clerkUserId: user!.id,
+      clerkUserId: user.id,
       eventId: eventId as any,
     });
   };
@@ -97,9 +125,10 @@ export default function EventsPage() {
   };
 
   const handleDelete = async (eventId: string) => {
+    if (!user) return;
     try {
       await deleteEvent({
-        clerkUserId: user!.id,
+        clerkUserId: user.id,
         eventId: eventId as Id<"events">,
       });
       setShowDeleteConfirm(null);
@@ -109,10 +138,18 @@ export default function EventsPage() {
     }
   };
 
-  if (!user) {
+  if (!isLoaded || isCreatingUser) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <p className="text-slate-500">Please sign in to view events.</p>
       </div>
     );
   }
@@ -139,13 +176,7 @@ export default function EventsPage() {
           </Button>
           <Button 
             variant="primary" 
-            onClick={() => {
-              if (!currentUser?.collegeId) {
-                alert("Please complete onboarding first to create events.");
-                return;
-              }
-              setShowCreateModal(true);
-            }}
+            onClick={() => setShowCreateModal(true)}
           >
             <Plus className="w-4 h-4 mr-2" />
             Create Event
