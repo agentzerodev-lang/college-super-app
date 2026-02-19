@@ -42,11 +42,13 @@ export const getCanteenItems = query({
   handler: async (ctx, args) => {
     requireAuth(await getAuth(ctx, args.clerkUserId));
     
-    if (args.category) {
+    const category = args.category;
+    
+    if (category) {
       return await ctx.db
         .query("canteenItems")
         .withIndex("by_canteenId_category", (q) =>
-          q.eq("canteenId", args.canteenId).eq("category", args.category)
+          q.eq("canteenId", args.canteenId).eq("category", category)
         )
         .collect();
     }
@@ -235,7 +237,7 @@ export const createOrder = mutation({
       paymentStatus: "pending",
       paymentMethod: args.paymentMethod,
       notes: args.notes,
-      estimatedTime: 15,
+      estimatedTime,
       createdAt: now,
     });
     

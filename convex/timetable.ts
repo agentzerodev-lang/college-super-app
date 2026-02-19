@@ -93,11 +93,13 @@ export const getTimetableByClassroom = query({
     requireAuth(await getAuth(ctx, args.clerkUserId));
 
     let entries;
-    if (args.dayOfWeek !== undefined) {
+    const dayOfWeek = args.dayOfWeek;
+    
+    if (dayOfWeek !== undefined) {
       entries = await ctx.db
         .query("timetable")
         .withIndex("by_classroomId_dayOfWeek", (q) =>
-          q.eq("classroomId", args.classroomId).eq("dayOfWeek", args.dayOfWeek)
+          q.eq("classroomId", args.classroomId).eq("dayOfWeek", dayOfWeek)
         )
         .filter((q) => q.eq(q.field("status"), "active"))
         .collect();

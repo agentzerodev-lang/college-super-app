@@ -22,7 +22,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (userId && isAuthRoute(req)) {
     const onboardingComplete = req.headers.get("x-onboarding-complete");
-    const destination = onboardingComplete === "true" ? "/home" : "/onboarding";
+    const destination = onboardingComplete === "true" ? "/dashboard" : "/onboarding";
     return Response.redirect(new URL(destination, req.url));
   }
 });

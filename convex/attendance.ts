@@ -151,11 +151,13 @@ export const getCourseAttendance = query({
   handler: async (ctx, args) => {
     requireRole(await getAuth(ctx, args.clerkUserId), FACULTY_ADMIN);
 
-    if (args.date) {
+    const date = args.date;
+
+    if (date) {
       return await ctx.db
         .query("attendance")
         .withIndex("by_courseId_date", (q) =>
-          q.eq("courseId", args.courseId).eq("date", args.date)
+          q.eq("courseId", args.courseId).eq("date", date)
         )
         .collect();
     }
@@ -214,11 +216,13 @@ export const getAttendanceStats = query({
     }
 
     let records;
-    if (args.courseId) {
+    const courseId = args.courseId;
+    
+    if (courseId) {
       records = await ctx.db
         .query("attendance")
         .withIndex("by_userId_courseId", (q) =>
-          q.eq("userId", args.studentId).eq("courseId", args.courseId)
+          q.eq("userId", args.studentId).eq("courseId", courseId)
         )
         .collect();
     } else {

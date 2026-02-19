@@ -298,7 +298,7 @@ export const getOverallLeaderboard = query({
       let displayName: string;
       if (aggregate.isAnonymous) {
         displayName = `Player ${aggregate.userId.slice(-6).toUpperCase()}`;
-      } else if (scoreUser) {
+      } else if (scoreUser && "name" in scoreUser) {
         displayName = scoreUser.name;
       } else {
         displayName = `Player ${aggregate.userId.slice(-6).toUpperCase()}`;

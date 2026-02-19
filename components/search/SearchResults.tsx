@@ -124,11 +124,11 @@ export function SearchResults({ results, onResultClick }: SearchResultsProps) {
               )}
 
               <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-400 dark:text-slate-500">
-                {result.type === "event" && result.metadata?.startTime && (
+                {result.type === "event" && typeof result.metadata?.startTime === "number" && (
                   <>
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {formatTime(result.metadata.startTime as number)}
+                      {formatTime(result.metadata.startTime)}
                     </span>
                     {result.subtitle && (
                       <span className="flex items-center gap-1">
@@ -142,7 +142,7 @@ export function SearchResults({ results, onResultClick }: SearchResultsProps) {
                 {result.type === "resource" && (
                   <>
                     <span className="capitalize">{result.subtitle}</span>
-                    {result.metadata?.downloadCount !== undefined && (
+                    {typeof result.metadata?.downloadCount === "number" && (
                       <span className="flex items-center gap-1">
                         <Download className="w-3 h-3" />
                         {result.metadata.downloadCount} downloads
@@ -157,7 +157,7 @@ export function SearchResults({ results, onResultClick }: SearchResultsProps) {
                       <User className="w-3 h-3" />
                       {result.subtitle}
                     </span>
-                    {result.metadata?.availableCopies !== undefined && (
+                    {typeof result.metadata?.availableCopies === "number" && typeof result.metadata?.totalCopies === "number" && (
                       <span>
                         {result.metadata.availableCopies} / {result.metadata.totalCopies} available
                       </span>
@@ -168,14 +168,14 @@ export function SearchResults({ results, onResultClick }: SearchResultsProps) {
                 {result.type === "ticket" && (
                   <>
                     <span className="capitalize">{result.subtitle}</span>
-                    {result.metadata?.status && (
-                      <span className={`capitalize flex items-center gap-1 ${getStatusColor(result.metadata.status as string)}`}>
+                    {typeof result.metadata?.status === "string" && (
+                      <span className={`capitalize flex items-center gap-1 ${getStatusColor(result.metadata.status)}`}>
                         <AlertCircle className="w-3 h-3" />
                         {result.metadata.status.replace("_", " ")}
                       </span>
                     )}
-                    {result.metadata?.priority && (
-                      <span className={`capitalize ${getPriorityColor(result.metadata.priority as string)}`}>
+                    {typeof result.metadata?.priority === "string" && (
+                      <span className={`capitalize ${getPriorityColor(result.metadata.priority)}`}>
                         {result.metadata.priority}
                       </span>
                     )}

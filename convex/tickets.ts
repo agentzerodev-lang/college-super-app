@@ -73,20 +73,23 @@ export const getByCollege = query({
   handler: async (ctx, args) => {
     requireAuth(await getAuth(ctx, args.clerkUserId));
     
-    if (args.status) {
+    const status = args.status;
+    const category = args.category;
+    
+    if (status) {
       return await ctx.db
         .query("tickets")
         .withIndex("by_collegeId_status", (q) => 
-          q.eq("collegeId", args.collegeId).eq("status", args.status)
+          q.eq("collegeId", args.collegeId).eq("status", status)
         )
         .collect();
     }
     
-    if (args.category) {
+    if (category) {
       return await ctx.db
         .query("tickets")
         .withIndex("by_collegeId_category", (q) => 
-          q.eq("collegeId", args.collegeId).eq("category", args.category)
+          q.eq("collegeId", args.collegeId).eq("category", category)
         )
         .collect();
     }

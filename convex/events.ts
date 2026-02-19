@@ -49,6 +49,8 @@ export const createEvent = mutation({
       maxAttendees: args.maxAttendees,
       registrationDeadline: args.registrationDeadline,
       isPublic: args.isPublic,
+      fee: args.fee,
+      isFree: args.isFree,
       registrationCount: 0,
       status: "active",
       createdAt: now,
@@ -86,12 +88,13 @@ export const getByCollege = query({
     requireAuth(await getAuth(ctx, args.clerkUserId));
 
     const now = Date.now();
+    const eventType = args.type;
 
-    if (args.type) {
+    if (eventType) {
       const events = await ctx.db
         .query("events")
         .withIndex("by_collegeId_type", (q) =>
-          q.eq("collegeId", args.collegeId).eq("type", args.type)
+          q.eq("collegeId", args.collegeId).eq("type", eventType)
         )
         .filter((q) => q.eq(q.field("status"), "active"))
         .collect();
@@ -132,14 +135,16 @@ export const searchEvents = query({
   },
   handler: async (ctx, args) => {
     requireAuth(await getAuth(ctx, args.clerkUserId));
+    
+    const eventType = args.type;
 
-    if (args.type) {
+    if (eventType) {
       return await ctx.db
         .query("events")
         .withSearchIndex("search_events", (q) =>
           q.search("title", args.searchTerm)
             .eq("collegeId", args.collegeId)
-            .eq("type", args.type)
+            .eq("type", eventType)
         )
         .take(20);
     }

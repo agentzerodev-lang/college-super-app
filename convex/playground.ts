@@ -73,11 +73,13 @@ export const getByCollege = query({
   handler: async (ctx, args) => {
     requireAuth(await getAuth(ctx, args.clerkUserId));
 
-    if (args.type) {
+    const playgroundType = args.type;
+
+    if (playgroundType) {
       return await ctx.db
         .query("playgrounds")
         .withIndex("by_collegeId_type", (q) =>
-          q.eq("collegeId", args.collegeId).eq("type", args.type)
+          q.eq("collegeId", args.collegeId).eq("type", playgroundType)
         )
         .filter((q) => q.eq(q.field("status"), "active"))
         .collect();

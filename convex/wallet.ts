@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuth, requireAuth, requireRole, ADMIN_ONLY } from "./auth";
+import { Id } from "./_generated/dataModel";
 
 export const getWallet = query({
   args: {
@@ -9,24 +10,12 @@ export const getWallet = query({
   handler: async (ctx, args) => {
     const userId = requireAuth(await getAuth(ctx, args.clerkUserId));
     
-    let wallet = await ctx.db
+    const wallet = await ctx.db
       .query("wallets")
       .withIndex("by_userId", (q) => q.eq("userId", userId))
       .first();
     
-    if (!wallet) {
-      const now = Date.now();
-      const walletId = await ctx.db.insert("wallets", {
-        userId,
-        balance: 0,
-        status: "active",
-        createdAt: now,
-        updatedAt: now,
-      });
-      wallet = await ctx.db.get(walletId);
-    }
-    
-    return wallet;
+    return wallet ?? null;
   },
 });
 
@@ -81,6 +70,10 @@ export const creditWallet = mutation({
   handler: async (ctx, args) => {
     requireRole(await getAuth(ctx, args.clerkUserId), ADMIN_ONLY);
     
+    if (args.amount <= 0) {
+      throw new Error("Amount must be greater than 0");
+    }
+    
     const wallet = await ctx.db
       .query("wallets")
       .withIndex("by_userId", (q) => q.eq("userId", args.targetUserId))
@@ -104,10 +97,14 @@ export const creditWallet = mutation({
     
     const user = await ctx.db.get(args.targetUserId);
     
+    if (!user?.collegeId) {
+      throw new Error("User must be associated with a college");
+    }
+    
     await ctx.db.insert("walletTransactions", {
       walletId: wallet._id,
       userId: args.targetUserId,
-      collegeId: user?.collegeId || ("_" as any),
+      collegeId: user.collegeId,
       type: "credit",
       amount: args.amount,
       category: args.category || "other",
@@ -144,6 +141,10 @@ export const debitWallet = mutation({
   handler: async (ctx, args) => {
     requireRole(await getAuth(ctx, args.clerkUserId), ADMIN_ONLY);
     
+    if (args.amount <= 0) {
+      throw new Error("Amount must be greater than 0");
+    }
+    
     const wallet = await ctx.db
       .query("wallets")
       .withIndex("by_userId", (q) => q.eq("userId", args.targetUserId))
@@ -171,10 +172,14 @@ export const debitWallet = mutation({
     
     const user = await ctx.db.get(args.targetUserId);
     
+    if (!user?.collegeId) {
+      throw new Error("User must be associated with a college");
+    }
+    
     await ctx.db.insert("walletTransactions", {
       walletId: wallet._id,
       userId: args.targetUserId,
-      collegeId: user?.collegeId || ("_" as any),
+      collegeId: user.collegeId,
       type: "debit",
       amount: args.amount,
       category: args.category || "other",
@@ -217,11 +222,15 @@ export const awardReward = mutation({
       throw new Error("User not found");
     }
     
+    if (!user.collegeId) {
+      throw new Error("User must be associated with a college");
+    }
+    
     const now = Date.now();
     
     await ctx.db.insert("rewards", {
       userId: args.targetUserId,
-      collegeId: user.collegeId || ("_" as any),
+      collegeId: user.collegeId,
       type: args.type || "points",
       name: args.name,
       description: args.description,
@@ -251,7 +260,7 @@ export const awardReward = mutation({
         await ctx.db.insert("walletTransactions", {
           walletId: wallet._id,
           userId: args.targetUserId,
-          collegeId: user.collegeId || ("_" as any),
+          collegeId: user.collegeId,
           type: "credit",
           amount: args.creditAmount,
           category: "reward",

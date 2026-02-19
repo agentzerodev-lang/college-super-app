@@ -79,8 +79,7 @@ export const getStudentDashboard = query({
             q.neq(q.field("status"), "resolved")
           )
           .order("desc")
-          .take(5)
-          .collect();
+          .take(5);
       })(),
       (async () => {
         const nowTs = Date.now();
@@ -90,8 +89,7 @@ export const getStudentDashboard = query({
             q.eq("collegeId", args.collegeId).gt("startTime", nowTs)
           )
           .filter((q) => q.eq(q.field("status"), "active"))
-          .take(5)
-          .collect();
+          .take(5);
       })(),
       (async () => {
         return await ctx.db
@@ -106,16 +104,14 @@ export const getStudentDashboard = query({
             q.eq("userId", userId).eq("status", "pending")
           )
           .order("desc")
-          .take(5)
-          .collect();
+          .take(5);
       })(),
       (async () => {
         return await ctx.db
           .query("bookBorrows")
           .withIndex("by_userId_status", (q) => q.eq("userId", userId).eq("status", "borrowed"))
           .order("desc")
-          .take(5)
-          .collect();
+          .take(5);
       })(),
     ]);
 
@@ -243,8 +239,7 @@ export const getFacultyDashboard = query({
             q.neq(q.field("status"), "resolved")
           )
           .order("desc")
-          .take(10)
-          .collect();
+          .take(10);
       })(),
     ]);
 
@@ -400,8 +395,7 @@ export const getHostelAdminDashboard = query({
           .withIndex("by_collegeId", (q) => q.eq("collegeId", args.collegeId))
           .filter((q) => q.neq(q.field("status"), "deleted"))
           .order("desc")
-          .take(10)
-          .collect();
+          .take(10);
 
         const reviewsWithDetails = await Promise.all(
           allReviews.map(async (review) => {
@@ -411,14 +405,14 @@ export const getHostelAdminDashboard = query({
             ]);
             return {
               ...review,
-              userName: user?.name || "Anonymous",
-              hostelName: hostel?.name || "Unknown",
+              userName: user && "name" in user ? user.name : "Anonymous",
+              hostelName: hostel && "name" in hostel ? hostel.name : "Unknown",
             };
           })
         );
 
         const avgRating = allReviews.length > 0
-          ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length
+          ? allReviews.reduce((sum: number, r) => sum + r.rating, 0) / allReviews.length
           : 0;
 
         return {
