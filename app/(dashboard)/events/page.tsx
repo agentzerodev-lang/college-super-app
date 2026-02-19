@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { EventCard } from "@/components/features/EventCard";
 import { CreateEventModal } from "@/components/modals/CreateEventModal";
+import { EditEventModal } from "@/components/modals/EditEventModal";
 import { 
   Calendar as CalendarIcon,
   Plus,
@@ -276,6 +277,16 @@ export default function EventsPage() {
         collegeId={currentUser?.collegeId}
         clerkUserId={user!.id}
         onSuccess={() => {
+        }}
+      />
+
+      <EditEventModal
+        isOpen={!!editingEvent}
+        onClose={() => setEditingEvent(null)}
+        event={editingEvent}
+        clerkUserId={user!.id}
+        onSuccess={() => {
+          setEditingEvent(null);
         }}
       />
 
