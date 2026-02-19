@@ -13,6 +13,7 @@ export interface UserProfile {
   year?: number;
   phone?: string;
   status: string;
+  collegeId?: string;
 }
 
 export function useCurrentUser() {
@@ -44,6 +45,7 @@ export function useCurrentUser() {
         year: convexUser.year,
         phone: convexUser.phone,
         status: convexUser.status,
+        collegeId: convexUser.collegeId,
       }
     : null;
 
