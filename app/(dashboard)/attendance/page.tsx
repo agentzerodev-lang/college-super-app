@@ -93,7 +93,7 @@ export default function AttendancePage() {
     if (!acc[courseId]) {
       acc[courseId] = {
         courseId,
-        course: record.course,
+        course: record.course ?? null,
         records: [],
       };
     }
