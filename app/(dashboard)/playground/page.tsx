@@ -259,7 +259,7 @@ export default function PlaygroundPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {availableSlots.map((slot) => {
               const isBooked = slot.status === "booked";
-              const isFull = slot.currentParticipants >= (slot.maxParticipants || 0);
+              const isFull = (slot.currentParticipants || 0) >= (slot.maxParticipants || 0);
               
               return (
                 <Card
