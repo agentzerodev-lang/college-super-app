@@ -60,6 +60,7 @@ export default defineSchema({
     userId: v.id("users"),
     courseId: v.id("courses"),
     date: v.number(),
+    period: v.optional(v.number()),
     status: v.union(v.literal("present"), v.literal("absent"), v.literal("late")),
     markedBy: v.id("users"),
     notes: v.optional(v.string()),

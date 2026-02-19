@@ -512,3 +512,26 @@ export const getAllClassrooms = query({
       .collect();
   },
 });
+
+export const getAllCourses = query({
+  args: {
+    clerkUserId: v.string(),
+    collegeId: v.optional(v.id("colleges")),
+  },
+  handler: async (ctx, args) => {
+    requireAuth(await getAuth(ctx, args.clerkUserId));
+
+    if (args.collegeId) {
+      return await ctx.db
+        .query("courses")
+        .withIndex("by_collegeId", (q) => q.eq("collegeId", args.collegeId!))
+        .filter((q) => q.eq(q.field("status"), "active"))
+        .collect();
+    }
+
+    return await ctx.db
+      .query("courses")
+      .filter((q) => q.eq(q.field("status"), "active"))
+      .collect();
+  },
+});

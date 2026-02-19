@@ -298,3 +298,151 @@ export const getTodayAttendance = query({
       .collect();
   },
 });
+
+export const markMyAttendance = mutation({
+  args: {
+    clerkUserId: v.string(),
+    courseId: v.id("courses"),
+    date: v.number(),
+    period: v.number(),
+    status: v.union(v.literal("present"), v.literal("absent"), v.literal("late")),
+    notes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const auth = await getAuth(ctx, args.clerkUserId);
+    const userId = requireAuth(auth);
+
+    const now = Date.now();
+
+    const existing = await ctx.db
+      .query("attendance")
+      .withIndex("by_userId_date", (q) =>
+        q.eq("userId", userId).eq("date", args.date)
+      )
+      .collect();
+    
+    const matching = existing.find(r => r.courseId === args.courseId && r.period === args.period);
+
+    if (matching) {
+      await ctx.db.patch(matching._id, {
+        status: args.status,
+        notes: args.notes,
+      });
+      return matching._id;
+    }
+
+    return await ctx.db.insert("attendance", {
+      userId: userId,
+      courseId: args.courseId,
+      date: args.date,
+      period: args.period,
+      status: args.status,
+      markedBy: userId,
+      notes: args.notes,
+      createdAt: now,
+    });
+  },
+});
+
+export const bulkMarkMyAttendance = mutation({
+  args: {
+    clerkUserId: v.string(),
+    records: v.array(v.object({
+      courseId: v.id("courses"),
+      date: v.number(),
+      period: v.number(),
+      status: v.union(v.literal("present"), v.literal("absent"), v.literal("late")),
+      notes: v.optional(v.string()),
+    })),
+  },
+  handler: async (ctx, args) => {
+    const auth = await getAuth(ctx, args.clerkUserId);
+    const userId = requireAuth(auth);
+    const now = Date.now();
+    const results = [];
+
+    for (const record of args.records) {
+      const existingRecords = await ctx.db
+        .query("attendance")
+        .withIndex("by_userId_date", (q) =>
+          q.eq("userId", userId).eq("date", record.date)
+        )
+        .collect();
+      
+      const existing = existingRecords.find(r => r.courseId === record.courseId && r.period === record.period);
+
+      if (existing) {
+        await ctx.db.patch(existing._id, {
+          status: record.status,
+          notes: record.notes,
+        });
+        results.push(existing._id);
+      } else {
+        const id = await ctx.db.insert("attendance", {
+          userId: userId,
+          courseId: record.courseId,
+          date: record.date,
+          period: record.period,
+          status: record.status,
+          markedBy: userId,
+          notes: record.notes,
+          createdAt: now,
+        });
+        results.push(id);
+      }
+    }
+
+    return results;
+  },
+});
+
+export const getMyAttendanceByDate = query({
+  args: {
+    clerkUserId: v.string(),
+    date: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const auth = await getAuth(ctx, args.clerkUserId);
+    const userId = requireAuth(auth);
+
+    const records = await ctx.db
+      .query("attendance")
+      .withIndex("by_userId_date", (q) =>
+        q.eq("userId", userId).eq("date", args.date)
+      )
+      .collect();
+
+    return records;
+  },
+});
+
+export const getStudentAttendanceWithPeriods = query({
+  args: {
+    clerkUserId: v.string(),
+    studentId: v.id("users"),
+    date: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const auth = await getAuth(ctx, args.clerkUserId);
+    requireAuth(auth);
+    
+    if (auth.role !== "admin" && auth.role !== "faculty" && auth.userId !== args.studentId) {
+      throw new Error("Not authorized to view this student's attendance");
+    }
+
+    const records = await ctx.db
+      .query("attendance")
+      .withIndex("by_userId_date", (q) =>
+        q.eq("userId", args.studentId).eq("date", args.date)
+      )
+      .collect();
+
+    const courseIds = [...new Set(records.map((r) => r.courseId))];
+    const courses = await Promise.all(courseIds.map((id) => ctx.db.get(id)));
+
+    return records.map((r) => ({
+      ...r,
+      course: courses.find((c) => c?._id === r.courseId) || null,
+    }));
+  },
+});

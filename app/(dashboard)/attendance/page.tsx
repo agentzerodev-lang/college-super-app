@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { AttendanceCard } from "@/components/features/AttendanceCard";
+import { UploadAttendanceModal } from "@/components/modals/UploadAttendanceModal";
 import { 
   Calendar, 
   TrendingUp, 
@@ -14,7 +15,8 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
-  Filter
+  Filter,
+  Upload
 } from "lucide-react";
 
 interface AttendanceRecord {
@@ -43,6 +45,7 @@ interface CourseData {
 export default function AttendancePage() {
   const { user } = useUser();
   const [dateFilter, setDateFilter] = useState<"today" | "week" | "month" | "all">("all");
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const currentUser = useQuery(
     api.users.getUser,
@@ -139,6 +142,13 @@ export default function AttendancePage() {
           <Button variant="primary">
             <Users className="w-4 h-4 mr-2" />
             Mark Attendance
+          </Button>
+        )}
+
+        {currentUser?.role === "student" && (
+          <Button variant="primary" onClick={() => setShowUploadModal(true)}>
+            <Upload className="w-4 h-4 mr-2" />
+            Upload Attendance
           </Button>
         )}
       </div>
@@ -267,6 +277,12 @@ export default function AttendancePage() {
           </div>
         </Card>
       )}
+
+      <UploadAttendanceModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        clerkUserId={user!.id}
+      />
     </div>
   );
 }
