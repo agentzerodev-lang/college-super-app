@@ -44,6 +44,7 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
   const [newSubjectName, setNewSubjectName] = useState("");
   const [newSubjectCode, setNewSubjectCode] = useState("");
   const [isAddingSubject, setIsAddingSubject] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const markMyAttendance = useMutation(api.attendance.markMyAttendance);
   const addStudentSubject = useMutation(api.attendance.addStudentSubject);
@@ -59,6 +60,12 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
     clerkUserId ? { clerkUserId } : "skip"
   );
 
+  // Force refresh after subject changes
+  const [subjectsVersion, setSubjectsVersion] = useState(0);
+  const effectiveSubjects = refreshKey > 0 
+    ? (mySubjects || []).slice() 
+    : mySubjects;
+
   const existingAttendance = useQuery(
     api.attendance.getMyAttendanceByDate,
     clerkUserId && selectedDate
@@ -68,7 +75,7 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
 
   const allCourseOptions = [
     ...(courses || []).map((c) => ({ id: c._id, name: c.name, code: c.code, type: "system" as const })),
-    ...(mySubjects || []).map((s) => ({ id: s._id, name: s.name, code: s.code, type: "custom" as const })),
+    ...(effectiveSubjects || []).map((s) => ({ id: s._id, name: s.name, code: s.code, type: "custom" as const })),
   ];
 
   useEffect(() => {
@@ -147,6 +154,8 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
       setNewSubjectName("");
       setNewSubjectCode("");
       setShowAddSubject(false);
+      // Trigger refresh
+      setRefreshKey(k => k + 1);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add subject");
     } finally {
@@ -160,6 +169,8 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
         clerkUserId,
         subjectId: subjectId as any,
       });
+      // Trigger refresh
+      setRefreshKey(k => k + 1);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete subject");
     }
@@ -376,9 +387,9 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
                     </motion.div>
                   )}
 
-                  {mySubjects && mySubjects.length > 0 && (
+                  {effectiveSubjects && effectiveSubjects.length > 0 && (
                     <div className="flex flex-wrap gap-2">
-                      {mySubjects.map((subject) => (
+                      {effectiveSubjects.map((subject) => (
                         <div
                           key={subject._id}
                           className="flex items-center gap-1 px-2 py-1 rounded-lg bg-dark-800/50 border border-white/10 text-slate-300 text-xs"
@@ -426,7 +437,7 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
                       >
                         <option value="">Select Course (Optional)</option>
                         <optgroup label="My Subjects">
-                          {mySubjects?.map((subject) => (
+                          {effectiveSubjects?.map((subject) => (
                             <option key={subject._id} value={subject._id}>
                               {subject.code} - {subject.name}
                             </option>

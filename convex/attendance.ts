@@ -110,11 +110,15 @@ export const getStudentAttendance = query({
       .collect();
 
     const courseIds = [...new Set(records.filter(r => r.courseId).map((r) => r.courseId!))];
+    const subjectIds = [...new Set(records.filter(r => r.studentSubjectId).map((r) => r.studentSubjectId!))];
+    
     const courses = await Promise.all(courseIds.map((id) => ctx.db.get(id)));
+    const studentSubjects = await Promise.all(subjectIds.map((id) => ctx.db.get(id)));
 
     return records.map((r) => ({
       ...r,
       course: courses.find((c) => c?._id === r.courseId) || null,
+      studentSubject: studentSubjects.find((s) => s?._id === r.studentSubjectId) || null,
     }));
   },
 });

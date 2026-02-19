@@ -23,9 +23,15 @@ interface AttendanceRecord {
   _id: string;
   userId: string;
   courseId: string;
+  studentSubjectId?: string;
   date: number;
   status: "present" | "absent" | "late";
   course?: {
+    _id: string;
+    name: string;
+    code: string;
+  } | null;
+  studentSubject?: {
     _id: string;
     name: string;
     code: string;
@@ -92,15 +98,18 @@ export default function AttendancePage() {
     : attendanceRecords as AttendanceRecord[] | undefined;
 
   const groupedByCourse = filteredRecords?.reduce((acc, record) => {
-    const courseId = record.courseId;
-    if (!acc[courseId]) {
-      acc[courseId] = {
-        courseId,
-        course: record.course ?? null,
+    // Use either courseId or studentSubjectId as the grouping key
+    const key = record.courseId || record.studentSubjectId;
+    if (!key) return acc; // Skip records without valid key
+    
+    if (!acc[key]) {
+      acc[key] = {
+        courseId: key,
+        course: record.course ?? record.studentSubject ?? null,
         records: [],
       };
     }
-    acc[courseId].records.push(record);
+    acc[key].records.push(record);
     return acc;
   }, {} as Record<string, CourseData>);
 
@@ -238,16 +247,21 @@ export default function AttendancePage() {
 
         {groupedByCourse && Object.keys(groupedByCourse).length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {Object.values(groupedByCourse).map((courseData) => (
-              <AttendanceCard
-                key={courseData.courseId}
-                courseName={courseData.course?.name || "Unknown Course"}
-                courseCode={courseData.course?.code || "N/A"}
-                stats={getCourseStats(courseData.records)}
-                recentRecords={courseData.records.slice(-7).reverse()}
-                canMark={isFacultyOrAdmin}
-              />
-            ))}
+            {Object.values(groupedByCourse).map((courseData) => {
+              const courseInfo = courseData.course as any;
+              const displayName = courseInfo?.name || "Custom Subject";
+              const displayCode = courseInfo?.code || "N/A";
+              return (
+                <AttendanceCard
+                  key={courseData.courseId}
+                  courseName={displayName}
+                  courseCode={displayCode}
+                  stats={getCourseStats(courseData.records)}
+                  recentRecords={courseData.records.slice(-7).reverse()}
+                  canMark={isFacultyOrAdmin}
+                />
+              );
+            })}
           </div>
         ) : (
           <Card className="p-8 text-center">
