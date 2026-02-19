@@ -1,6 +1,6 @@
-# College Super-App MVP - Requirements
+# College Super-App - Requirements
 
-## v1 Requirements
+## v1 Requirements (MVP - Complete ✅)
 
 ### AUTH - Authentication & Users
 
@@ -159,6 +159,78 @@
 - [ ] **FRNT-07**: Dark mode support
 - [ ] **FRNT-08**: Universal search across features
 
+---
+
+## v1.5 Requirements - Premium Redesign (Active)
+
+### DSYS - Design System
+
+- [ ] **DSYS-01**: Dark mode first design tokens (colors, spacing, typography, shadows)
+- [ ] **DSYS-02**: Glassmorphism card component with backdrop blur and gradient borders
+- [ ] **DSYS-03**: Animated button component with scale, glow, and inertia effects
+- [ ] **DSYS-04**: Skeleton loader components with shimmer animation
+- [ ] **DSYS-05**: Gradient border component with animated gradient
+- [ ] **DSYS-06**: Subtle noise texture overlay for depth
+- [ ] **DSYS-07**: Premium color palette with semantic meaning
+
+### MOTN - Motion System
+
+- [ ] **MOTN-01**: Framer Motion installed and configured
+- [ ] **MOTN-02**: Reusable animation variants (fade, slide, scale, stagger)
+- [ ] **MOTN-03**: Page transition animations with direction awareness
+- [ ] **MOTN-04**: Scroll-based reveal animations
+- [ ] **MOTN-05**: Micro-interaction presets (hover, press, success)
+- [ ] **MOTN-06**: Spring physics configuration for natural feel
+
+### LAYT - Layout & Navigation
+
+- [ ] **LAYT-01**: Glassmorphism sidebar with blur effect and gradient accents
+- [ ] **LAYT-02**: Animated bottom navigation with icon morphing effects
+- [ ] **LAYT-03**: Smooth page transitions between all routes
+- [ ] **LAYT-04**: Dark/light mode toggle with smooth color transition
+- [ ] **LAYT-05**: Mobile-first responsive behavior (375px to 1440px+)
+
+### DASH-P - Premium Dashboard
+
+- [ ] **DASH-P01**: Feature cards with gradient borders and tilt on hover
+- [ ] **DASH-P02**: Animated statistics with number counting effect
+- [ ] **DASH-P03**: Real-time clock/date display with subtle pulse
+- [ ] **DASH-P04**: Quick action buttons with glow effects
+- [ ] **DASH-P05**: Today's schedule with timeline visualization
+- [ ] **DASH-P06**: Alert/notification cards with pulse animation
+- [ ] **DASH-P07**: Role-specific dashboards with consistent design language
+
+### FEAT-P - Feature Enhancements
+
+- [ ] **FEAT-P01**: Attendance marking with celebratory animation feedback
+- [ ] **FEAT-P02**: Timetable grid with current class pulsing highlight
+- [ ] **FEAT-P03**: Classroom availability with smooth status transitions
+- [ ] **FEAT-P04**: Resource cards with upvote particle burst animation
+- [ ] **FEAT-P05**: Search results with stagger slide-in effect
+- [ ] **FEAT-P06**: Empty states with animated placeholder illustrations
+- [ ] **FEAT-P07**: Canteen menu with fly-to-cart animation
+- [ ] **FEAT-P08**: Star ratings with sparkle animation
+- [ ] **FEAT-P09**: Book borrow/return with smooth state transition
+- [ ] **FEAT-P10**: Event registration with celebration animation
+- [ ] **FEAT-P11**: Ticket status with smooth color/icon transition
+- [ ] **FEAT-P12**: SOS button with urgent pulsing glow effect
+- [ ] **FEAT-P13**: Wallet transactions with slide-in and icons
+- [ ] **FEAT-P14**: Playground slots with clear availability visualization
+- [ ] **FEAT-P15**: Leaderboard with rank change animations
+
+### POLI - Polish & Optimization
+
+- [ ] **POLI-01**: All animations run at 60fps on mid-range devices
+- [ ] **POLI-02**: Respects prefers-reduced-motion with instant fallback
+- [ ] **POLI-03**: Loading states for all async operations
+- [ ] **POLI-04**: Error states with friendly animated messages and retry
+- [ ] **POLI-05**: Success confirmations with celebratory feedback
+- [ ] **POLI-06**: Full keyboard navigation support
+- [ ] **POLI-07**: Screen reader optimizations for dynamic content
+- [ ] **POLI-08**: Responsive testing from 320px to 4K displays
+
+---
+
 ## v2 Requirements (Deferred)
 
 - Real payment gateway integration
@@ -179,6 +251,8 @@
 
 ## Traceability
 
+### MVP (v1) - Complete ✅
+
 | Phase | Requirements |
 |-------|-------------|
 | Phase 1: Project Setup | AUTH-01 to AUTH-07 |
@@ -189,3 +263,16 @@
 | Phase 6: Library & Credits | LIBR-01 to LIBR-09, WALL-01 to WALL-08 |
 | Phase 7: Gamification | SKIL-01 to SKIL-07 |
 | Phase 8: Frontend Core | FRNT-01 to FRNT-08, DASH-01 to DASH-05 |
+
+### Premium Redesign (v1.5) - Active
+
+| Phase | Requirements | Count |
+|-------|-------------|-------|
+| Phase 1: Design System & Motion | DSYS-01 to DSYS-07, MOTN-01 to MOTN-06 | 13 |
+| Phase 2: Layout & Navigation | LAYT-01 to LAYT-05 | 5 |
+| Phase 3: Dashboard Enhancement | DASH-P01 to DASH-P07 | 7 |
+| Phase 4: Core Features Enhancement | FEAT-P01 to FEAT-P06 | 6 |
+| Phase 5: Service Features Enhancement | FEAT-P07 to FEAT-P15 | 9 |
+| Phase 6: Polish & Optimization | POLI-01 to POLI-08 | 8 |
+
+**Total Premium Redesign Requirements: 48**

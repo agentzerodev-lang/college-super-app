@@ -38,7 +38,7 @@ export function AdminDashboard() {
           label: "Total Users",
           value: dashboardData.users.total,
           icon: Users,
-          color: "indigo" as const,
+          color: "primary" as const,
           trend: dashboardData.users.active !== dashboardData.users.total
             ? {
                 value: Math.round(
@@ -52,19 +52,19 @@ export function AdminDashboard() {
           label: "Active Users",
           value: dashboardData.users.active,
           icon: Activity,
-          color: "emerald" as const,
+          color: "success" as const,
         },
         {
           label: "Open Tickets",
           value: dashboardData.tickets.open + dashboardData.tickets.inProgress,
           icon: Ticket,
-          color: "amber" as const,
+          color: "warning" as const,
         },
         {
           label: "Active Alerts",
           value: dashboardData.sosAlerts.active + dashboardData.sosAlerts.responding,
           icon: AlertTriangle,
-          color: "rose" as const,
+          color: "error" as const,
         },
       ]
     : [];
@@ -75,14 +75,14 @@ export function AdminDashboard() {
       description: "Manage all users",
       icon: Users,
       href: "/admin/users",
-      color: "indigo" as const,
+      color: "primary" as const,
     },
     {
       title: "Tickets",
       description: "Handle support tickets",
       icon: Ticket,
       href: "/admin/tickets",
-      color: "amber" as const,
+      color: "warning" as const,
       badge: dashboardData?.tickets?.open
         ? `${dashboardData.tickets.open} open`
         : undefined,
@@ -92,14 +92,14 @@ export function AdminDashboard() {
       description: "Manage campus events",
       icon: PartyPopper,
       href: "/admin/events",
-      color: "teal" as const,
+      color: "accent" as const,
     },
     {
       title: "SOS Alerts",
       description: "Emergency management",
       icon: Shield,
       href: "/admin/sos",
-      color: "rose" as const,
+      color: "error" as const,
       badge:
         dashboardData?.sosAlerts?.active || dashboardData?.sosAlerts?.responding
           ? `${dashboardData.sosAlerts.active + dashboardData.sosAlerts.responding} active`

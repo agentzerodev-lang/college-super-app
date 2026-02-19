@@ -1,7 +1,9 @@
 "use client";
 
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button-new";
+import { cn } from "@/lib/utils";
+import { spring } from "@/components/motion/variants";
 import { 
   Calendar, 
   MapPin, 
@@ -12,7 +14,7 @@ import {
 } from "lucide-react";
 
 interface EventCardProps {
-  id: string;
+  id?: string;
   title: string;
   description?: string;
   type: "academic" | "cultural" | "sports" | "workshop" | "seminar" | "competition" | "other";
@@ -32,18 +34,17 @@ interface EventCardProps {
   onCancelRegistration?: () => void;
 }
 
-const typeColors = {
-  academic: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
-  cultural: "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
-  sports: "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400",
-  workshop: "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
-  seminar: "bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400",
-  competition: "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400",
-  other: "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400",
+const typeVariants = {
+  academic: { gradient: "from-blue-500 to-blue-600", bg: "bg-blue-500/10", text: "text-blue-400" },
+  cultural: { gradient: "from-purple-500 to-purple-600", bg: "bg-purple-500/10", text: "text-purple-400" },
+  sports: { gradient: "from-green-500 to-green-600", bg: "bg-green-500/10", text: "text-green-400" },
+  workshop: { gradient: "from-orange-500 to-orange-600", bg: "bg-orange-500/10", text: "text-orange-400" },
+  seminar: { gradient: "from-teal-500 to-teal-600", bg: "bg-teal-500/10", text: "text-teal-400" },
+  competition: { gradient: "from-red-500 to-red-600", bg: "bg-red-500/10", text: "text-red-400" },
+  other: { gradient: "from-slate-500 to-slate-600", bg: "bg-slate-500/10", text: "text-slate-400" },
 };
 
 export function EventCard({
-  id,
   title,
   description,
   type,
@@ -55,7 +56,6 @@ export function EventCard({
   maxAttendees,
   registrationCount = 0,
   isRegistered = false,
-  isPublic = true,
   creatorName,
   fee,
   onRegister,
@@ -81,66 +81,93 @@ export function EventCard({
   const isUpcoming = startTime > Date.now();
   const spotsRemaining = maxAttendees ? maxAttendees - registrationCount : null;
   const isFull = maxAttendees !== undefined && spotsRemaining !== null && spotsRemaining <= 0;
+  const variants = typeVariants[type];
 
   return (
-    <Card className="overflow-hidden">
+    <motion.div
+      whileHover={{ scale: 1.01, y: -4 }}
+      transition={spring}
+      className={cn(
+        "group relative overflow-hidden rounded-2xl",
+        "backdrop-blur-xl bg-dark-800/50",
+        "border border-white/5",
+        "transition-all duration-300",
+        "hover:border-white/10 hover:bg-dark-800/70",
+        "shadow-glass hover:shadow-glass-lg"
+      )}
+    >
       {imageUrl && (
-        <div className="h-32 md:h-40 w-full overflow-hidden bg-slate-100 dark:bg-slate-700">
-          <img
+        <div className="h-36 w-full overflow-hidden relative">
+          <motion.img
             src={imageUrl}
             alt={title}
             className="w-full h-full object-cover"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-dark-900/80 to-transparent" />
         </div>
       )}
       
-      <div className="p-4">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <span className={`text-xs px-2 py-1 rounded-full capitalize ${typeColors[type]}`}>
+      <div className="p-5">
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <motion.span
+            whileHover={{ scale: 1.05 }}
+            className={cn(
+              "text-xs px-3 py-1 rounded-full font-semibold capitalize",
+              "bg-gradient-to-r",
+              variants.gradient,
+              "text-white"
+            )}
+          >
             {type}
-          </span>
+          </motion.span>
           {isRegistered && (
-            <span className="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="text-xs px-3 py-1 rounded-full bg-success-500/20 text-success-500 font-semibold"
+            >
               Registered
-            </span>
+            </motion.span>
           )}
         </div>
 
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-1">
+        <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-primary-400 transition-colors">
           {title}
         </h3>
 
         {description && (
-          <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-3">
+          <p className="text-sm text-slate-400 line-clamp-2 mb-4">
             {description}
           </p>
         )}
 
-        <div className="space-y-2 mb-3">
-          <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-            <Calendar className="w-4 h-4" />
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center gap-2 text-sm text-slate-400">
+            <Calendar className="w-4 h-4 text-primary-400" />
             <span>{formatDate(startTime)}</span>
           </div>
           
-          <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-            <Clock className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-sm text-slate-400">
+            <Clock className="w-4 h-4 text-accent-400" />
             <span>{formatTime(startTime)} - {formatTime(endTime)}</span>
           </div>
 
           {location && (
-            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-              <MapPin className="w-4 h-4" />
+            <div className="flex items-center gap-2 text-sm text-slate-400">
+              <MapPin className="w-4 h-4 text-warning-500" />
               <span className="truncate">{location}</span>
             </div>
           )}
 
           {maxAttendees !== undefined && (
-            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-              <Users className="w-4 h-4" />
+            <div className="flex items-center gap-2 text-sm text-slate-400">
+              <Users className="w-4 h-4 text-success-500" />
               <span>
                 {registrationCount} / {maxAttendees} registered
                 {spotsRemaining !== null && spotsRemaining > 0 && (
-                  <span className="text-green-500 dark:text-green-400 ml-1">
+                  <span className="text-success-500 ml-1">
                     ({spotsRemaining} spots left)
                   </span>
                 )}
@@ -149,26 +176,26 @@ export function EventCard({
           )}
 
           {fee !== undefined && fee > 0 && (
-            <div className="flex items-center gap-2 text-sm font-medium text-slate-900 dark:text-slate-100">
-              <span>Fee:</span>
-              <span>₹{fee}</span>
+            <div className="flex items-center gap-2 text-sm font-semibold text-white">
+              <span className="text-slate-500">Fee:</span>
+              <span className="text-accent-400">₹{fee}</span>
             </div>
           )}
         </div>
 
         {tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-3">
+          <div className="flex flex-wrap gap-2 mb-4">
             {tags.slice(0, 3).map((tag, index) => (
               <span
                 key={index}
-                className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400"
+                className="flex items-center gap-1 text-xs text-slate-500 px-2 py-1 rounded-lg bg-dark-700/50"
               >
                 <Tag className="w-3 h-3" />
                 {tag}
               </span>
             ))}
             {tags.length > 3 && (
-              <span className="text-xs text-slate-400 dark:text-slate-500">
+              <span className="text-xs text-slate-600 px-2 py-1">
                 +{tags.length - 3}
               </span>
             )}
@@ -176,14 +203,14 @@ export function EventCard({
         )}
 
         {creatorName && (
-          <p className="text-xs text-slate-400 dark:text-slate-500 mb-3">
-            by {creatorName}
+          <p className="text-xs text-slate-500 mb-4">
+            by <span className="text-slate-400">{creatorName}</span>
           </p>
         )}
 
         <div className="flex gap-2">
           {isUpcoming && !isRegistered && !isFull && onRegister && (
-            <Button onClick={onRegister} variant="primary" size="sm" className="flex-1">
+            <Button onClick={onRegister} variant="primary" size="sm" className="flex-1" glow>
               Register
             </Button>
           )}
@@ -195,17 +222,17 @@ export function EventCard({
           )}
 
           {isFull && !isRegistered && (
-            <span className="text-sm text-red-500 font-medium">Event Full</span>
+            <span className="text-sm text-error-500 font-semibold">Event Full</span>
           )}
 
           {onViewDetails && (
-            <Button onClick={onViewDetails} variant="secondary" size="sm" className="flex-1">
+            <Button onClick={onViewDetails} variant="glass" size="sm" className="flex-1">
               <ExternalLink className="w-4 h-4 mr-1" />
               Details
             </Button>
           )}
         </div>
       </div>
-    </Card>
+    </motion.div>
   );
 }

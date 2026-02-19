@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "next-themes";
 import { ConvexClientProvider } from "@/components/providers/ConvexClientProvider";
@@ -7,11 +7,22 @@ import "./globals.css";
 
 export const dynamic = "force-dynamic";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
-  title: "College Super-App",
-  description: "All-in-one campus companion for students",
+  title: "MySRKR - College Super App",
+  description: "All-in-one campus companion for students, faculty, and administrators",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -21,16 +32,18 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={inter.className}>
+      <html lang="en" suppressHydrationWarning className="dark">
+        <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >
             <ConvexClientProvider>
-              {children}
+              <div className="min-h-screen bg-dark-950 bg-gradient-mesh">
+                {children}
+              </div>
             </ConvexClientProvider>
           </ThemeProvider>
         </body>

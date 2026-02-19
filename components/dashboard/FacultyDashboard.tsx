@@ -48,19 +48,19 @@ export function FacultyDashboard() {
           label: "Today's Classes",
           value: dashboardData.todayClasses.length,
           icon: Calendar,
-          color: "indigo" as const,
+          color: "primary" as const,
         },
         {
           label: "Attendance Marked",
           value: `${dashboardData.attendanceStats.today.present}/${dashboardData.attendanceStats.today.total}`,
           icon: CheckCircle,
-          color: "emerald" as const,
+          color: "success" as const,
         },
         {
           label: "Assigned Tickets",
           value: dashboardData.assignedTickets.length,
           icon: Ticket,
-          color: "amber" as const,
+          color: "warning" as const,
         },
         {
           label: "Overall Attendance",
@@ -72,7 +72,7 @@ export function FacultyDashboard() {
               )}%`
             : "N/A",
           icon: Users,
-          color: "teal" as const,
+          color: "accent" as const,
         },
       ]
     : [];
@@ -83,14 +83,14 @@ export function FacultyDashboard() {
       description: "Record student attendance",
       icon: CheckCircle,
       href: "/attendance/mark",
-      color: "emerald" as const,
+      color: "success" as const,
     },
     {
       title: "My Schedule",
       description: "View teaching timetable",
       icon: Calendar,
       href: "/schedule",
-      color: "indigo" as const,
+      color: "primary" as const,
     },
     {
       title: "My Courses",
@@ -104,7 +104,7 @@ export function FacultyDashboard() {
       description: "Handle assigned tickets",
       icon: Ticket,
       href: "/tickets",
-      color: "amber" as const,
+      color: "warning" as const,
     },
   ];
 

@@ -38,25 +38,25 @@ export function CanteenAdminDashboard() {
           label: "Today's Orders",
           value: dashboardData.orders.today,
           icon: ShoppingBag,
-          color: "indigo" as const,
+          color: "primary" as const,
         },
         {
           label: "Pending Orders",
           value: dashboardData.orders.pending + dashboardData.orders.confirmed + dashboardData.orders.preparing,
           icon: Clock,
-          color: "amber" as const,
+          color: "warning" as const,
         },
         {
           label: "Today's Revenue",
           value: `₹${dashboardData.orders.todayRevenue}`,
           icon: IndianRupee,
-          color: "emerald" as const,
+          color: "success" as const,
         },
         {
           label: "Menu Items",
           value: dashboardData.items.total,
           icon: Package,
-          color: "teal" as const,
+          color: "accent" as const,
         },
       ]
     : [];
@@ -67,14 +67,14 @@ export function CanteenAdminDashboard() {
       description: "Add or edit items",
       icon: Package,
       href: "/canteen-admin/menu",
-      color: "indigo" as const,
+      color: "primary" as const,
     },
     {
       title: "Orders",
       description: "View and manage orders",
       icon: ShoppingBag,
       href: "/canteen-admin/orders",
-      color: "teal" as const,
+      color: "accent" as const,
       badge: dashboardData?.orders?.pending
         ? `${dashboardData.orders.pending} pending`
         : undefined,
@@ -84,14 +84,14 @@ export function CanteenAdminDashboard() {
       description: "Manage canteens",
       icon: Store,
       href: "/canteen-admin/canteens",
-      color: "amber" as const,
+      color: "warning" as const,
     },
     {
       title: "Analytics",
       description: "Sales & reports",
       icon: IndianRupee,
       href: "/canteen-admin/analytics",
-      color: "emerald" as const,
+      color: "success" as const,
     },
   ];
 

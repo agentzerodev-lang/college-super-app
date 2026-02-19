@@ -36,25 +36,25 @@ export function HostelAdminDashboard() {
           label: "Hostels",
           value: dashboardData.hostels.length,
           icon: Home,
-          color: "indigo" as const,
+          color: "primary" as const,
         },
         {
           label: "Today's Meals",
           value: dashboardData.todayMeals.length,
           icon: Utensils,
-          color: "teal" as const,
+          color: "accent" as const,
         },
         {
           label: "Avg Rating",
           value: dashboardData.reviews.averageRating || "N/A",
           icon: Star,
-          color: "amber" as const,
+          color: "warning" as const,
         },
         {
           label: "Open Tickets",
           value: dashboardData.hostelTickets.open + dashboardData.hostelTickets.inProgress,
           icon: Ticket,
-          color: "rose" as const,
+          color: "error" as const,
         },
       ]
     : [];
@@ -65,28 +65,28 @@ export function HostelAdminDashboard() {
       description: "View and edit hostels",
       icon: Home,
       href: "/hostel-admin/hostels",
-      color: "indigo" as const,
+      color: "primary" as const,
     },
     {
       title: "Meal Menu",
       description: "Update daily meals",
       icon: Utensils,
       href: "/hostel-admin/meals",
-      color: "teal" as const,
+      color: "accent" as const,
     },
     {
       title: "Reviews",
       description: "View student reviews",
       icon: Star,
       href: "/hostel-admin/reviews",
-      color: "amber" as const,
+      color: "warning" as const,
     },
     {
       title: "Tickets",
       description: "Handle hostel tickets",
       icon: Ticket,
       href: "/hostel-admin/tickets",
-      color: "rose" as const,
+      color: "error" as const,
       badge: dashboardData?.hostelTickets?.open
         ? `${dashboardData.hostelTickets.open} open`
         : undefined,
