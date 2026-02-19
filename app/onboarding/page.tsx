@@ -39,10 +39,11 @@ export default function OnboardingPage() {
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    if (existingUser?.role) {
+    // Only redirect if onboarding is fully complete (both DB role and Clerk metadata)
+    if (existingUser?.role && user?.unsafeMetadata?.onboardingComplete === true) {
       router.push("/dashboard");
     }
-  }, [existingUser, router]);
+  }, [existingUser, user, router]);
 
   useEffect(() => {
     if (user?.unsafeMetadata?.role) {
