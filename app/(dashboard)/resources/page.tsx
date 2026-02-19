@@ -3,6 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -87,7 +88,7 @@ export default function ResourcesPage() {
   });
 
   const handleDownload = async (resourceId: string) => {
-    await incrementDownload({ clerkUserId: user!.id, resourceId });
+    await incrementDownload({ clerkUserId: user!.id, resourceId: resourceId as Id<"resources"> });
   };
 
   const getTypeCount = (type: ResourceType | null) => {
