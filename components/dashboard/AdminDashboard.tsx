@@ -7,7 +7,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import {
   Users,
   Ticket,
-  Event,
+  PartyPopper,
   AlertTriangle,
   ChevronRight,
   Shield,
@@ -90,7 +90,7 @@ export function AdminDashboard() {
     {
       title: "Events",
       description: "Manage campus events",
-      icon: Event,
+      icon: PartyPopper,
       href: "/admin/events",
       color: "teal" as const,
     },
