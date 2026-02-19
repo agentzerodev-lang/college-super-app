@@ -8,7 +8,7 @@ import {
   Calendar,
   Clock,
   Ticket,
-  Event,
+  PartyPopper,
   Wallet,
   AlertTriangle,
   CheckCircle,
@@ -74,10 +74,10 @@ export function StudentDashboard() {
 
   const quickActions = [
     {
-      title: "Class Schedule",
-      description: "View your timetable",
+      title: "Timetable",
+      description: "View your schedule",
       icon: Calendar,
-      href: "/schedule",
+      href: "/timetable",
       color: "indigo" as const,
     },
     {
@@ -108,16 +108,16 @@ export function StudentDashboard() {
         : undefined,
     },
     {
-      title: "Raise Ticket",
+      title: "Tickets",
       description: "Submit support request",
       icon: Ticket,
-      href: "/tickets/new",
+      href: "/tickets",
       color: "rose" as const,
     },
     {
       title: "Events",
       description: "Campus events & activities",
-      icon: Event,
+      icon: PartyPopper,
       href: "/events",
       color: "teal" as const,
     },
@@ -286,7 +286,7 @@ export function StudentDashboard() {
             </div>
           ) : (
             <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-              <Event className="w-12 h-12 mx-auto mb-2 opacity-50" />
+              <PartyPopper className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p>No upcoming events</p>
             </div>
           )}

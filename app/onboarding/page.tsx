@@ -40,7 +40,7 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (existingUser?.role) {
-      router.push("/");
+      router.push("/dashboard");
     }
   }, [existingUser, router]);
 
@@ -53,7 +53,7 @@ export default function OnboardingPage() {
   if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
       </div>
     );
   }
@@ -94,7 +94,7 @@ export default function OnboardingPage() {
         unsafeMetadata: { role, onboardingComplete: true },
       });
 
-      router.push("/");
+      router.push("/dashboard");
     } catch (err) {
       setError("Failed to complete onboarding. Please try again.");
       console.error(err);
@@ -107,6 +107,9 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-4">
       <div className="max-w-md mx-auto py-8">
         <div className="text-center mb-8">
+          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-600 to-teal-500 flex items-center justify-center mx-auto mb-4">
+            <span className="text-white font-bold text-2xl">S</span>
+          </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
             Complete Your Profile
           </h1>
@@ -132,7 +135,7 @@ export default function OnboardingPage() {
                 <select
                   value={branch}
                   onChange={(e) => setBranch(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 >
                   <option value="">Select your branch</option>
                   {BRANCHES.map((b) => (
@@ -155,7 +158,7 @@ export default function OnboardingPage() {
                       onClick={() => setYear(y)}
                       className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
                         year === y
-                          ? "bg-primary-600 text-white"
+                          ? "bg-indigo-600 text-white"
                           : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
                       }`}
                     >
@@ -176,7 +179,7 @@ export default function OnboardingPage() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+91 9876543210"
-              className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
 
@@ -189,7 +192,7 @@ export default function OnboardingPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 px-4 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-3 px-4 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting ? "Completing..." : "Complete Setup"}
           </button>

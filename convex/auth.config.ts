@@ -1,7 +1,7 @@
 export default {
   providers: [
     {
-      domain: process.env.CLERK_JWKS_URL ?? process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.replace("pk_", "https://") ?? "",
+      domain: "https://knowing-vulture-32.clerk.accounts.dev",
       applicationID: "convex",
     },
   ],

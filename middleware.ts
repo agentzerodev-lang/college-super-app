@@ -1,37 +1,29 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isPublicRoute = createRouteMatcher([
+  "/",
   "/sign-in(.*)",
   "/sign-up(.*)",
+  "/onboarding(.*)",
   "/api/webhooks(.*)",
 ]);
 
-const isOnboardingRoute = createRouteMatcher(["/onboarding"]);
+const isAuthRoute = createRouteMatcher([
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+]);
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId, sessionClaims } = await auth();
+  const { userId } = await auth();
 
   if (!isPublicRoute(req)) {
-    if (!userId) {
-      const signInUrl = new URL("/sign-in", req.url);
-      signInUrl.searchParams.set("redirect_url", req.url);
-      return Response.redirect(signInUrl);
-    }
-
-    const onboardingComplete = sessionClaims?.onboardingComplete as boolean | undefined;
-    if (!onboardingComplete && !isOnboardingRoute(req)) {
-      const onboardingUrl = new URL("/onboarding", req.url);
-      return Response.redirect(onboardingUrl);
-    }
+    await auth.protect();
   }
 
-  if (userId && isPublicRoute(req)) {
-    const onboardingComplete = sessionClaims?.onboardingComplete as boolean | undefined;
-    if (!onboardingComplete) {
-      const onboardingUrl = new URL("/onboarding", req.url);
-      return Response.redirect(onboardingUrl);
-    }
-    return Response.redirect(new URL("/home", req.url));
+  if (userId && isAuthRoute(req)) {
+    const onboardingComplete = req.headers.get("x-onboarding-complete");
+    const destination = onboardingComplete === "true" ? "/home" : "/onboarding";
+    return Response.redirect(new URL(destination, req.url));
   }
 });
 

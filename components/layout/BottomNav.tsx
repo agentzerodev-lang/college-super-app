@@ -1,14 +1,14 @@
 "use client";
 
-import { Home, Search, Zap, Bell, User } from "lucide-react";
+import { Home, Search, Calendar, Bell, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/home", icon: Home, label: "Home" },
+  { href: "/dashboard", icon: Home, label: "Home" },
   { href: "/search", icon: Search, label: "Search" },
-  { href: "/quick", icon: Zap, label: "Quick" },
-  { href: "/notifications", icon: Bell, label: "Alerts" },
+  { href: "/timetable", icon: Calendar, label: "Schedule" },
+  { href: "/tickets", icon: Bell, label: "Tickets" },
   { href: "/profile", icon: User, label: "Profile" },
 ];
 
@@ -26,7 +26,11 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`nav-item flex-1 h-full ${isActive ? "nav-item-active" : ""}`}
+              className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
+                isActive 
+                  ? "text-indigo-600 dark:text-indigo-400" 
+                  : "text-slate-500 dark:text-slate-400"
+              }`}
             >
               <Icon className="w-6 h-6" />
               <span className="text-xs mt-1">{item.label}</span>

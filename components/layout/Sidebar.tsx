@@ -1,27 +1,35 @@
 "use client";
 
-import { Home, Search, Zap, Bell, User, Calendar, CheckSquare, MessageCircle, Users, Map, Car, ShoppingBag, LogOut, Moon, Sun } from "lucide-react";
+import { 
+  Home, Search, Bell, User, LogOut, Moon, Sun,
+  Calendar, BookOpen, AlertTriangle, UtensilsCrossed,
+  Building2, Trophy, Wallet, Library, CalendarClock
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useClerk } from "@clerk/nextjs";
 
 const mainNavItems = [
-  { href: "/home", icon: Home, label: "Home" },
+  { href: "/dashboard", icon: Home, label: "Dashboard" },
   { href: "/search", icon: Search, label: "Search" },
-  { href: "/quick", icon: Zap, label: "Quick Actions" },
-  { href: "/notifications", icon: Bell, label: "Notifications" },
   { href: "/profile", icon: User, label: "Profile" },
 ];
 
 const featureNavItems = [
-  { href: "/calendar", icon: Calendar, label: "Calendar" },
-  { href: "/tasks", icon: CheckSquare, label: "Tasks" },
-  { href: "/chat", icon: MessageCircle, label: "Chat" },
-  { href: "/groups", icon: Users, label: "Groups" },
-  { href: "/map", icon: Map, label: "Campus Map" },
-  { href: "/ride-share", icon: Car, label: "Ride Share" },
-  { href: "/marketplace", icon: ShoppingBag, label: "Marketplace" },
+  { href: "/attendance", icon: Calendar, label: "Attendance" },
+  { href: "/timetable", icon: CalendarClock, label: "Timetable" },
+  { href: "/classrooms", icon: Building2, label: "Free Rooms" },
+  { href: "/resources", icon: BookOpen, label: "Resources" },
+  { href: "/tickets", icon: AlertTriangle, label: "Tickets" },
+  { href: "/sos", icon: AlertTriangle, label: "SOS" },
+  { href: "/hostel", icon: Building2, label: "Hostel" },
+  { href: "/canteen", icon: UtensilsCrossed, label: "Canteen" },
+  { href: "/playground", icon: Trophy, label: "Playground" },
+  { href: "/events", icon: Calendar, label: "Events" },
+  { href: "/library", icon: Library, label: "Library" },
+  { href: "/wallet", icon: Wallet, label: "Wallet" },
+  { href: "/leaderboard", icon: Trophy, label: "Leaderboard" },
 ];
 
 export function Sidebar() {
@@ -34,11 +42,11 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex flex-col w-64 h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 fixed left-0 top-0 z-40">
       <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-        <Link href="/home" className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-teal-500 flex items-center justify-center">
-            <span className="text-white font-bold text-lg">C</span>
+            <span className="text-white font-bold text-lg">S</span>
           </div>
-          <span className="font-bold text-xl text-gradient">CollegeApp</span>
+          <span className="font-bold text-xl bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent">MySRKR</span>
         </Link>
       </div>
 
@@ -106,7 +114,7 @@ export function Sidebar() {
         </button>
         <button
           onClick={() => signOut()}
-          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200"
+          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors duration-200"
         >
           <LogOut className="w-5 h-5" />
           <span className="font-medium">Sign Out</span>

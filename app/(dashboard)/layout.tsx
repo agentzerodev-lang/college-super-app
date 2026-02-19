@@ -3,6 +3,8 @@
 import { useCurrentUser, useRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { BottomNav } from "@/components/layout/BottomNav";
 
 export default function DashboardLayout({
   children,
@@ -29,10 +31,14 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <div className="p-4 md:p-6 lg:p-8">
-        {children}
-      </div>
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <main className="flex-1 md:ml-64">
+        <div className="p-4 md:p-6 lg:p-8 pb-16 md:pb-8">
+          {children}
+        </div>
+      </main>
+      <BottomNav />
     </div>
   );
 }

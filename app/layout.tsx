@@ -3,8 +3,6 @@ import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "next-themes";
 import { ConvexClientProvider } from "@/components/providers/ConvexClientProvider";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { BottomNav } from "@/components/layout/BottomNav";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -32,15 +30,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <ConvexClientProvider>
-              <div className="flex min-h-screen">
-                <Sidebar />
-                <main className="flex-1 md:ml-64">
-                  <div className="pb-16 md:pb-0">
-                    {children}
-                  </div>
-                </main>
-              </div>
-              <BottomNav />
+              {children}
             </ConvexClientProvider>
           </ThemeProvider>
         </body>
