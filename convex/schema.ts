@@ -58,7 +58,8 @@ export default defineSchema({
 
   attendance: defineTable({
     userId: v.id("users"),
-    courseId: v.id("courses"),
+    courseId: v.optional(v.id("courses")),
+    studentSubjectId: v.optional(v.id("studentSubjects")),
     date: v.number(),
     period: v.optional(v.number()),
     status: v.union(v.literal("present"), v.literal("absent"), v.literal("late")),
@@ -71,6 +72,15 @@ export default defineSchema({
     .index("by_userId_date", ["userId", "date"])
     .index("by_courseId_date", ["courseId", "date"])
     .index("by_userId_courseId", ["userId", "courseId"]),
+
+  studentSubjects: defineTable({
+    userId: v.id("users"),
+    name: v.string(),
+    code: v.string(),
+    status: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_userId", ["userId"]),
 
   courses: defineTable({
     name: v.string(),

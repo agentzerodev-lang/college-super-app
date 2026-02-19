@@ -109,7 +109,7 @@ export const getStudentAttendance = query({
       .withIndex("by_userId", (q) => q.eq("userId", args.studentId))
       .collect();
 
-    const courseIds = [...new Set(records.map((r) => r.courseId))];
+    const courseIds = [...new Set(records.filter(r => r.courseId).map((r) => r.courseId!))];
     const courses = await Promise.all(courseIds.map((id) => ctx.db.get(id)));
 
     return records.map((r) => ({
@@ -191,7 +191,7 @@ export const getAttendanceByDateRange = query({
       )
       .collect();
 
-    const courseIds = [...new Set(records.map((r) => r.courseId))];
+    const courseIds = [...new Set(records.filter(r => r.courseId).map((r) => r.courseId!))];
     const courses = await Promise.all(courseIds.map((id) => ctx.db.get(id)));
 
     return records.map((r) => ({
@@ -302,7 +302,8 @@ export const getTodayAttendance = query({
 export const markMyAttendance = mutation({
   args: {
     clerkUserId: v.string(),
-    courseId: v.id("courses"),
+    courseId: v.optional(v.id("courses")),
+    studentSubjectId: v.optional(v.id("studentSubjects")),
     date: v.number(),
     period: v.number(),
     status: v.union(v.literal("present"), v.literal("absent"), v.literal("late")),
@@ -311,6 +312,10 @@ export const markMyAttendance = mutation({
   handler: async (ctx, args) => {
     const auth = await getAuth(ctx, args.clerkUserId);
     const userId = requireAuth(auth);
+
+    if (!args.courseId && !args.studentSubjectId) {
+      throw new Error("Either courseId or studentSubjectId is required");
+    }
 
     const now = Date.now();
 
@@ -321,7 +326,11 @@ export const markMyAttendance = mutation({
       )
       .collect();
     
-    const matching = existing.find(r => r.courseId === args.courseId && r.period === args.period);
+    const matching = existing.find(r => 
+      r.period === args.period && 
+      ((args.courseId && r.courseId === args.courseId) || 
+       (args.studentSubjectId && r.studentSubjectId === args.studentSubjectId))
+    );
 
     if (matching) {
       await ctx.db.patch(matching._id, {
@@ -334,6 +343,7 @@ export const markMyAttendance = mutation({
     return await ctx.db.insert("attendance", {
       userId: userId,
       courseId: args.courseId,
+      studentSubjectId: args.studentSubjectId,
       date: args.date,
       period: args.period,
       status: args.status,
@@ -437,12 +447,82 @@ export const getStudentAttendanceWithPeriods = query({
       )
       .collect();
 
-    const courseIds = [...new Set(records.map((r) => r.courseId))];
+    const courseIds = [...new Set(records.filter(r => r.courseId).map((r) => r.courseId!))];
     const courses = await Promise.all(courseIds.map((id) => ctx.db.get(id)));
 
     return records.map((r) => ({
       ...r,
       course: courses.find((c) => c?._id === r.courseId) || null,
     }));
+  },
+});
+
+export const addStudentSubject = mutation({
+  args: {
+    clerkUserId: v.string(),
+    name: v.string(),
+    code: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const auth = await getAuth(ctx, args.clerkUserId);
+    const userId = requireAuth(auth);
+    const now = Date.now();
+
+    const existing = await ctx.db
+      .query("studentSubjects")
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("code"), args.code.toUpperCase()))
+      .first();
+
+    if (existing) {
+      throw new Error("Subject with this code already exists");
+    }
+
+    return await ctx.db.insert("studentSubjects", {
+      userId,
+      name: args.name,
+      code: args.code.toUpperCase(),
+      status: "active",
+      createdAt: now,
+    });
+  },
+});
+
+export const deleteStudentSubject = mutation({
+  args: {
+    clerkUserId: v.string(),
+    subjectId: v.id("studentSubjects"),
+  },
+  handler: async (ctx, args) => {
+    const auth = await getAuth(ctx, args.clerkUserId);
+    const userId = requireAuth(auth);
+
+    const subject = await ctx.db.get(args.subjectId);
+    if (!subject) {
+      throw new Error("Subject not found");
+    }
+
+    if (subject.userId !== userId) {
+      throw new Error("Not authorized to delete this subject");
+    }
+
+    await ctx.db.delete(args.subjectId);
+    return args.subjectId;
+  },
+});
+
+export const getMySubjects = query({
+  args: {
+    clerkUserId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const auth = await getAuth(ctx, args.clerkUserId);
+    const userId = requireAuth(auth);
+
+    return await ctx.db
+      .query("studentSubjects")
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("status"), "active"))
+      .collect();
   },
 });

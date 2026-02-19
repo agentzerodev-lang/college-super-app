@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2, Calendar, Clock, Check, XCircle, AlertCircle } from "lucide-react";
+import { X, Loader2, Calendar, Check, XCircle, AlertCircle, Plus, Trash2, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button-new";
 import { Input } from "@/components/ui/input";
 import { GlassCard } from "@/components/ui/glass-card";
@@ -16,6 +16,13 @@ interface PeriodCourse {
   courseCode: string;
   status: "present" | "absent" | "late" | "not_marked";
   isUnassigned?: boolean;
+  isCustomSubject?: boolean;
+}
+
+interface StudentSubject {
+  _id: string;
+  name: string;
+  code: string;
 }
 
 interface UploadAttendanceModalProps {
@@ -33,10 +40,22 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [showAddSubject, setShowAddSubject] = useState(false);
+  const [newSubjectName, setNewSubjectName] = useState("");
+  const [newSubjectCode, setNewSubjectCode] = useState("");
+  const [isAddingSubject, setIsAddingSubject] = useState(false);
 
   const markMyAttendance = useMutation(api.attendance.markMyAttendance);
+  const addStudentSubject = useMutation(api.attendance.addStudentSubject);
+  const deleteStudentSubject = useMutation(api.attendance.deleteStudentSubject);
+
   const courses = useQuery(
     api.timetable.getAllCourses,
+    clerkUserId ? { clerkUserId } : "skip"
+  );
+
+  const mySubjects = useQuery(
+    api.attendance.getMySubjects,
     clerkUserId ? { clerkUserId } : "skip"
   );
 
@@ -46,6 +65,11 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
       ? { clerkUserId, date: new Date(selectedDate).getTime() }
       : "skip"
   );
+
+  const allCourseOptions = [
+    ...(courses || []).map((c) => ({ id: c._id, name: c.name, code: c.code, type: "system" as const })),
+    ...(mySubjects || []).map((s) => ({ id: s._id, name: s.name, code: s.code, type: "custom" as const })),
+  ];
 
   useEffect(() => {
     if (existingAttendance && existingAttendance.length > 0) {
@@ -81,7 +105,8 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
   };
 
   const handleCourseSelect = (period: number, courseId: string) => {
-    const course = courses?.find((c) => c._id === courseId);
+    const course = allCourseOptions.find((c) => c.id === courseId);
+    const isCustom = course?.type === "custom";
     setPeriodCourses((prev) =>
       prev.map((p) =>
         p.period === period
@@ -91,6 +116,7 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
               courseName: course?.name || "Unknown",
               courseCode: course?.code || "",
               status: p.status === "not_marked" ? "present" : p.status,
+              isCustomSubject: isCustom,
             }
           : p
       )
@@ -101,6 +127,42 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
     setPeriodCourses((prev) =>
       prev.map((p) => (p.period === period ? { ...p, status } : p))
     );
+  };
+
+  const handleAddSubject = async () => {
+    if (!newSubjectName.trim() || !newSubjectCode.trim()) {
+      setError("Please enter both subject name and code");
+      return;
+    }
+
+    setIsAddingSubject(true);
+    setError(null);
+
+    try {
+      await addStudentSubject({
+        clerkUserId,
+        name: newSubjectName.trim(),
+        code: newSubjectCode.trim(),
+      });
+      setNewSubjectName("");
+      setNewSubjectCode("");
+      setShowAddSubject(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add subject");
+    } finally {
+      setIsAddingSubject(false);
+    }
+  };
+
+  const handleDeleteSubject = async (subjectId: string) => {
+    try {
+      await deleteStudentSubject({
+        clerkUserId,
+        subjectId: subjectId as any,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete subject");
+    }
   };
 
   const handleSubmit = async () => {
@@ -122,13 +184,24 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
     try {
       for (const record of validRecords) {
         if (record.status === "not_marked" || record.isUnassigned) continue;
-        await markMyAttendance({
-          clerkUserId,
-          courseId: record.courseId as any,
-          date: dateTimestamp,
-          period: record.period,
-          status: record.status as "present" | "absent" | "late",
-        });
+        
+        if (record.isCustomSubject) {
+          await markMyAttendance({
+            clerkUserId,
+            studentSubjectId: record.courseId as any,
+            date: dateTimestamp,
+            period: record.period,
+            status: record.status as "present" | "absent" | "late",
+          });
+        } else {
+          await markMyAttendance({
+            clerkUserId,
+            courseId: record.courseId as any,
+            date: dateTimestamp,
+            period: record.period,
+            status: record.status as "present" | "absent" | "late",
+          });
+        }
       }
       setSuccess(true);
       setTimeout(() => {
@@ -243,6 +316,95 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
                 </div>
 
                 <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-medium text-slate-300">My Subjects</h3>
+                      <p className="text-xs text-slate-500">Manage your custom subjects</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddSubject(!showAddSubject)}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary-500/20 text-primary-400 text-sm hover:bg-primary-500/30 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Subject
+                    </button>
+                  </div>
+
+                  {showAddSubject && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3"
+                    >
+                      <div className="grid grid-cols-2 gap-3">
+                        <Input
+                          placeholder="Subject Code (e.g., CS101)"
+                          value={newSubjectCode}
+                          onChange={(e) => setNewSubjectCode(e.target.value.toUpperCase())}
+                          className="bg-dark-800/50 border-white/10 text-white placeholder:text-slate-500"
+                        />
+                        <Input
+                          placeholder="Subject Name"
+                          value={newSubjectName}
+                          onChange={(e) => setNewSubjectName(e.target.value)}
+                          className="bg-dark-800/50 border-white/10 text-white placeholder:text-slate-500"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="glass"
+                          size="sm"
+                          onClick={() => setShowAddSubject(false)}
+                          className="flex-1"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="primary"
+                          size="sm"
+                          onClick={handleAddSubject}
+                          disabled={isAddingSubject}
+                          className="flex-1"
+                        >
+                          {isAddingSubject ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add Subject"}
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {mySubjects && mySubjects.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {mySubjects.map((subject) => (
+                        <div
+                          key={subject._id}
+                          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-dark-800/50 border border-white/10 text-slate-300 text-xs"
+                        >
+                          <BookOpen className="w-3 h-3 text-primary-400" />
+                          <span>{subject.code}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteSubject(subject._id)}
+                            className="p-0.5 rounded hover:bg-red-500/20 text-slate-500 hover:text-red-400"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {(!mySubjects || mySubjects.length === 0) && !showAddSubject && (
+                    <p className="text-xs text-slate-500 italic">
+                      No custom subjects added. Click "Add Subject" to create your own subjects.
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-3">
                   <h3 className="text-sm font-medium text-slate-300">Mark Attendance by Period</h3>
                   <p className="text-xs text-slate-500">
                     Select course for each period. Unassigned periods will be ignored.
@@ -263,11 +425,20 @@ export function UploadAttendanceModal({ isOpen, onClose, clerkUserId }: UploadAt
                         className="flex-1 px-3 py-2 rounded-lg bg-dark-800/50 border border-white/10 text-white text-sm focus:border-primary-500/50"
                       >
                         <option value="">Select Course (Optional)</option>
-                        {courses?.map((course) => (
-                          <option key={course._id} value={course._id}>
-                            {course.code} - {course.name}
-                          </option>
-                        ))}
+                        <optgroup label="My Subjects">
+                          {mySubjects?.map((subject) => (
+                            <option key={subject._id} value={subject._id}>
+                              {subject.code} - {subject.name}
+                            </option>
+                          ))}
+                        </optgroup>
+                        <optgroup label="System Courses">
+                          {courses?.map((course) => (
+                            <option key={course._id} value={course._id}>
+                              {course.code} - {course.name}
+                            </option>
+                          ))}
+                        </optgroup>
                       </select>
 
                       {period.courseId && (
