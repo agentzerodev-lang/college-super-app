@@ -42,30 +42,28 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   if (eventType === "user.created") {
-    const { id, email_addresses, first_name, last_name, image_url, public_metadata } = evt.data;
+    const { id, email_addresses, first_name, last_name, public_metadata } = evt.data;
     const email = email_addresses?.[0]?.email_address || "";
-    const role = (public_metadata as { role?: string })?.role || "student";
+    const role = ((public_metadata as { role?: string })?.role || "student") as "student" | "faculty" | "admin" | "hostelAdmin" | "canteenAdmin";
 
-    await convex.mutation(api.users.createUser, {
-      userId: id,
+    await convex.mutation(api.users.createOrUpdateUser, {
+      clerkUserId: id,
       email,
       name: [first_name, last_name].filter(Boolean).join(" ") || "User",
       role,
-      avatar: image_url,
     });
   }
 
   if (eventType === "user.updated") {
-    const { id, email_addresses, first_name, last_name, image_url, public_metadata } = evt.data;
+    const { id, email_addresses, first_name, last_name, public_metadata } = evt.data;
     const email = email_addresses?.[0]?.email_address || "";
-    const role = (public_metadata as { role?: string })?.role || "student";
+    const role = ((public_metadata as { role?: string })?.role || "student") as "student" | "faculty" | "admin" | "hostelAdmin" | "canteenAdmin";
 
-    await convex.mutation(api.users.updateUser, {
-      userId: id,
+    await convex.mutation(api.users.createOrUpdateUser, {
+      clerkUserId: id,
       email,
       name: [first_name, last_name].filter(Boolean).join(" ") || "User",
       role,
-      avatar: image_url,
     });
   }
 
