@@ -1,7 +1,6 @@
 "use client";
 
 import { useCurrentUser, useRole } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { BottomNav } from "@/components/layout/BottomNav";
@@ -12,10 +11,10 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isLoaded, isOnboarded } = useCurrentUser();
-  const { role } = useRole();
+  const { isLoaded } = useCurrentUser();
+  const { isLoaded: isRoleLoaded } = useRole();
 
-  if (!isLoaded) {
+  if (!isLoaded || !isRoleLoaded) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-dark-950">
         <motion.div
@@ -42,14 +41,8 @@ export default function DashboardLayout({
     );
   }
 
-  // HACKATHON: Allow non-onboarded users to access dashboard
-  // if (!isOnboarded) {
-  //   redirect("/onboarding");
-  // }
-
-  if (!role) {
-    redirect("/sign-in");
-  }
+  // Note: We don't redirect for new hackathon users - they can access the dashboard
+  // The dashboard page itself will show appropriate content based on their role
 
   return (
     <div className="flex min-h-screen bg-dark-950">
