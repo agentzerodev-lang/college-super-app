@@ -3,10 +3,12 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { EventCard } from "@/components/features/EventCard";
+import { CreateEventModal } from "@/components/modals/CreateEventModal";
 import { 
   Calendar as CalendarIcon,
   Filter,
@@ -234,28 +236,14 @@ export default function EventsPage() {
         )}
       </div>
 
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <Card className="w-full max-w-lg my-8">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
-                Create Event
-              </h2>
-              <p className="text-slate-500 dark:text-slate-400">
-                Event creation form would go here...
-              </p>
-              <div className="flex gap-3 mt-6">
-                <Button variant="secondary" onClick={() => setShowCreateModal(false)} className="flex-1">
-                  Cancel
-                </Button>
-                <Button variant="primary" onClick={() => setShowCreateModal(false)} className="flex-1">
-                  Create Event
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
-      )}
+      <CreateEventModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        collegeId={currentUser?.collegeId as Id<"colleges">}
+        clerkUserId={user!.id}
+        onSuccess={() => {
+        }}
+      />
     </div>
   );
 }

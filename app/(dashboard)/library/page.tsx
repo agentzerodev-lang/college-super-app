@@ -3,10 +3,12 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { BookCard } from "@/components/features/BookCard";
+import { AddBookModal } from "@/components/modals/AddBookModal";
 import { 
   Book,
   Search,
@@ -24,6 +26,7 @@ export default function LibraryPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
   const [activeTab, setActiveTab] = useState<"browse" | "borrowed">("browse");
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const currentUser = useQuery(
     api.users.getUser,
@@ -102,7 +105,7 @@ export default function LibraryPage() {
         </div>
 
         {isAdmin && (
-          <Button variant="primary">
+          <Button variant="primary" onClick={() => setShowAddModal(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Add Book
           </Button>
@@ -313,6 +316,16 @@ export default function LibraryPage() {
           )}
         </>
       )}
+
+      <AddBookModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        collegeId={currentUser?.collegeId as Id<"colleges">}
+        clerkUserId={user!.id}
+        onSuccess={() => {
+          setShowAddModal(false);
+        }}
+      />
     </div>
   );
 }
