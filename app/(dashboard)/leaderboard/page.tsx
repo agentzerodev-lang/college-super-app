@@ -279,19 +279,19 @@ export default function LeaderboardPage() {
         <div className="space-y-2">
           {filteredLeaderboard.map((entry, index) => (
             <LeaderboardRow
-              key={`${entry.userId}-${entry.skillName || index}`}
+              key={`${entry.userId}-${'skillName' in entry ? entry.skillName : index}`}
               rank={entry.rank}
               userId={entry.userId}
               displayName={entry.displayName}
               isAnonymous={entry.isAnonymous}
-              score={entry.score}
-              totalScore={entry.totalScore}
-              skillName={entry.skillName}
-              skillCount={entry.skillCount}
-              topSkills={entry.topSkills}
-              badges={entry.badges}
+              score={'score' in entry ? entry.score : entry.totalScore || 0}
+              totalScore={'totalScore' in entry ? entry.totalScore : undefined}
+              skillName={'skillName' in entry ? entry.skillName : undefined}
+              skillCount={'skillCount' in entry ? entry.skillCount : undefined}
+              topSkills={'topSkills' in entry ? entry.topSkills : undefined}
+              badges={'badges' in entry ? entry.badges : undefined}
               isCurrentUser={entry.isCurrentUser}
-              verifiedAt={entry.verifiedAt}
+              verifiedAt={'verifiedAt' in entry ? entry.verifiedAt : undefined}
               onToggleGhostMode={entry.isCurrentUser ? handleToggleGhostMode : undefined}
             />
           ))}
