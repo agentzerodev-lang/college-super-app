@@ -3,6 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -38,19 +39,19 @@ export default function SOSPage() {
   );
 
   const myAlerts = useQuery(
-    api.sosAlerts.getMyAlerts,
+    api.sos.getMyAlerts,
     user?.id ? { clerkUserId: user.id } : "skip"
   );
 
   const activeAlerts = useQuery(
-    api.sosAlerts.getActiveByCollege,
+    api.sos.getActiveByCollege,
     currentUser?.collegeId && (currentUser.role === "faculty" || currentUser.role === "admin")
       ? { clerkUserId: user!.id, collegeId: currentUser.collegeId }
       : "skip"
   );
 
-  const createSOS = useMutation(api.sosAlerts.create);
-  const cancelSOS = useMutation(api.sosAlerts.cancel);
+  const createSOS = useMutation(api.sos.create);
+  const cancelSOS = useMutation(api.sos.cancel);
 
   const isStaff = currentUser?.role === "faculty" || 
                   currentUser?.role === "admin" || 
@@ -150,7 +151,7 @@ export default function SOSPage() {
     try {
       await cancelSOS({
         clerkUserId: user!.id,
-        sosId: activeAlert._id,
+        sosId: activeAlert._id as Id<"sosAlerts">,
       });
     } catch (error) {
       console.error("Failed to cancel SOS:", error);
