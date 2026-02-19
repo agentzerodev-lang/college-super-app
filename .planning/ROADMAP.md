@@ -1,187 +1,278 @@
-# College Super-App MVP - Roadmap
+# College Super-App Premium Redesign
 
 ## Overview
 
 | Metric | Value |
 |--------|-------|
-| Total Phases | 8 |
-| Total Requirements | 76 |
-| Timeline | 1-2 days |
-| Mode | YOLO (auto-advance) |
+| Project Type | UI/UX Enhancement & Premium Redesign |
+| Base | Existing Next.js 15 + Convex + Clerk MVP |
+| Target Quality | Apple / Linear / Vercel standard |
+| Total Phases | 6 |
+| Timeline | 2-3 weeks |
+
+### Vision
+
+Transform the functional College Super-App into a **premium, high-tech experience** with:
+- Dark mode first design with glassmorphism
+- Smooth Framer Motion animations throughout
+- Clean, minimal, futuristic UI
+- Micro-interactions that delight users
+- Mobile-native feel on web
+
+### Design Philosophy
+
+| Principle | Implementation |
+|-----------|----------------|
+| **Dark First** | Dark backgrounds with subtle gradients, light mode as afterthought |
+| **Glassmorphism** | Frosted glass cards with backdrop blur + subtle borders |
+| **Motion Everywhere** | Page transitions, scroll animations, hover effects, micro-interactions |
+| **Confident Spacing** | Large typography, generous whitespace, clear hierarchy |
+| **Alive Elements** | Buttons scale/glow, cards tilt/lift, smooth skeleton loaders |
 
 ---
 
-## Phase 1: Project Setup & Auth
+## Phases
 
-**Goal:** Establish Convex backend, Clerk auth, and user management foundation
-
-**Requirements:** AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05, AUTH-06, AUTH-07
-
-**Success Criteria:**
-1. Convex project initialized with schema
-2. Clerk integration working with 5 roles
-3. User can sign up, sign in, view profile
-4. Role-based authorization helper created
-5. Wallet created for each new user
-6. Admin can manage users
-
-**Plans:** 2-3 plans
+- [ ] **Phase 1: Design System & Motion Foundation** - Core design tokens, Framer Motion setup, base animated components
+- [ ] **Phase 2: Layout & Navigation Overhaul** - Glassmorphism sidebar, animated bottom nav, page transitions
+- [ ] **Phase 3: Dashboard Enhancement** - Premium cards, animated stats, real-time feel
+- [ ] **Phase 4: Core Features Enhancement** - Attendance, Timetable, Classrooms with premium UI
+- [ ] **Phase 5: Service Features Enhancement** - Canteen, Hostel, Library, Events, Tickets, SOS
+- [ ] **Phase 6: Polish & Optimization** - Performance, accessibility, final animations, edge cases
 
 ---
 
-## Phase 2: Core Backend (Attendance + Timetable)
+## Phase Details
 
-**Goal:** Implement academic core features - attendance and timetable systems
+### Phase 1: Design System & Motion Foundation
 
-**Requirements:** ATTD-01 to ATTD-06, TIME-01 to TIME-06, FREE-01 to FREE-03
+**Goal:** Establish the premium visual foundation with design tokens, motion primitives, and reusable animated base components
+
+**Depends on:** Nothing (foundation phase)
+
+**Requirements:**
+- Design tokens for dark theme (colors, spacing, typography, shadows)
+- Framer Motion configuration and animation variants
+- Glassmorphism card component
+- Animated button component with hover/press states
+- Skeleton loader components
+- Gradient border component
+- Noise texture overlay
 
 **Success Criteria:**
-1. Student can mark daily attendance
-2. Faculty can view/mark attendance by date
-3. Attendance statistics calculated
-4. Timetable CRUD operations work
-5. Next class query returns correct result
-6. Free classroom availability derived correctly
+1. Design tokens defined in Tailwind config with dark-first approach
+2. Framer Motion installed with reusable animation variants (fade, slide, scale, stagger)
+3. GlassCard component with backdrop blur, gradient borders, hover tilt effect
+4. Button component that scales on hover, glows on active, has inertia effect
+5. Skeleton loader with shimmer animation
+6. All base components have Storybook-style documentation comments
 
-**Plans:** 3-4 plans
+**Plans:** 4 plans in 4 waves
+
+**Plan List:**
+- [ ] PHASE-1-01-PLAN.md — Foundation: Install deps, cn() utility, Tailwind design tokens
+- [ ] PHASE-1-02-PLAN.md — Motion System: Animation variants, scroll reveal, motion provider
+- [ ] PHASE-1-03-PLAN.md — Core UI: GlassCard, Button, Input with glassmorphism
+- [ ] PHASE-1-04-PLAN.md — Supporting: Skeleton, Typography, barrel exports
 
 ---
 
-## Phase 3: Support Systems (Resources + Tickets + SOS)
+### Phase 2: Layout & Navigation Overhaul
 
-**Goal:** Implement support and emergency features
+**Goal:** Transform app shell into premium navigation experience with glassmorphism sidebar, animated bottom nav, and smooth page transitions
 
-**Requirements:** RESC-01 to RESC-06, TICK-01 to TICK-07, SOS-01 to SOS-05
+**Depends on:** Phase 1 (design system)
+
+**Requirements:**
+- Glassmorphism sidebar with blur effect and subtle gradient
+- Animated bottom navigation with icon morphing
+- Page transition animations (slide, fade combinations)
+- Scroll-based reveal animations
+- Mobile-first responsive behavior
+- Dark mode toggle with smooth transition
 
 **Success Criteria:**
-1. Resources can be created, filtered, upvoted
-2. Tickets created with status lifecycle
-3. Staff can manage tickets
-4. SOS alerts created and tracked
-5. All queries return usable data
+1. Sidebar has frosted glass effect, slides smoothly, shows active state with gradient accent
+2. Bottom nav items animate on tap (scale + icon morph)
+3. Page transitions are smooth (300ms), direction-aware
+4. Elements fade/slide in on scroll with stagger effect
+5. Layout adapts beautifully from mobile (375px) to desktop (1440px+)
+6. Dark/light mode toggle with smooth color transition animation
 
-**Plans:** 3-4 plans
+**Plans:** TBD
 
 ---
 
-## Phase 4: Services (Hostel + Canteen)
+### Phase 3: Dashboard Enhancement
 
-**Goal:** Implement daily service features
+**Goal:** Transform dashboard into premium command center with animated stats, real-time feel, and delightful micro-interactions
 
-**Requirements:** HOST-01 to HOST-06, CANT-01 to CANT-09
+**Depends on:** Phase 1, Phase 2
+
+**Requirements:**
+- Premium feature cards with gradient accents
+- Animated statistics with number counting
+- Real-time clock/date display
+- Quick action buttons with glow effects
+- Today's schedule with timeline visualization
+- Alert/notification cards with pulse animation
+- Role-specific dashboard variants (student, faculty, admin)
 
 **Success Criteria:**
-1. Meals created and rated by students
-2. Average ratings calculated correctly
-3. Canteen menu items managed
-4. Orders placed and tracked through status lifecycle
-5. Order statistics available
+1. Feature cards have gradient borders, tilt on hover, smooth press states
+2. Statistics animate with counting effect on page load
+3. Clock shows live time with subtle pulse on second change
+4. Quick actions have prominent glow effect, satisfying click feedback
+5. Schedule shows timeline with current time indicator animation
+6. Alert cards have attention-grabbing but not annoying pulse
+7. All 5 role dashboards use consistent design language
 
-**Plans:** 3-4 plans
+**Plans:** TBD
 
 ---
 
-## Phase 5: Activities (Playground + Events)
+### Phase 4: Core Features Enhancement (Academic)
 
-**Goal:** Implement activity and event management
+**Goal:** Apply premium UI to core academic features - Attendance, Timetable, Classrooms, Resources
 
-**Requirements:** PLAY-01 to PLAY-08, EVNT-01 to EVNT-09
+**Depends on:** Phase 1, Phase 2
+
+**Requirements:**
+- Attendance marking with satisfying animation feedback
+- Timetable grid with time indicators and current class highlight
+- Classroom availability with visual status indicators
+- Resource cards with upvote animation
+- Search with animated results
+- Empty states with animated illustrations
 
 **Success Criteria:**
-1. Playgrounds and slots created
-2. Booking conflict prevention works
-3. Events created with registration
-4. Waitlisting when max participants reached
-5. Registration cancellation updates counts
+1. Attendance button has celebratory animation on successful mark
+2. Timetable grid shows current class with pulsing highlight
+3. Free/occupied classrooms have clear visual distinction with smooth transitions
+4. Resource upvote triggers particle burst animation
+5. Search results slide in with stagger effect
+6. Empty states show helpful animated placeholder illustrations
+7. All academic pages have consistent premium feel
 
-**Plans:** 3-4 plans
+**Plans:** TBD
 
 ---
 
-## Phase 6: Library & Credits
+### Phase 5: Service Features Enhancement
 
-**Goal:** Implement library management and wallet system
+**Goal:** Transform service features (Canteen, Hostel, Library, Events, Tickets, SOS, Wallet, Playground, Leaderboard) with premium UI
 
-**Requirements:** LIBR-01 to LIBR-09, WALL-01 to WALL-08
+**Depends on:** Phase 1, Phase 2, Phase 4
+
+**Requirements:**
+- Canteen menu with appetizing cards and order flow
+- Hostel meal reviews with star animation
+- Library book cards with borrow/return animations
+- Event cards with registration animation
+- Ticket cards with status transition animations
+- SOS button with urgent attention-drawing effect
+- Wallet with transaction animations
+- Playground booking with slot visualization
+- Leaderboard with rank change animations
 
 **Success Criteria:**
-1. Books catalog searchable
-2. Borrow/return with due dates
-3. Fines calculated for overdue
-4. Wallet balance tracked
-5. Rewards credit wallet automatically
-6. Admin can manage wallets
+1. Canteen items show beautifully, cart adds items with fly-to-cart animation
+2. Star ratings fill with sparkle animation on hover/click
+3. Book borrow/return has smooth state transition
+4. Event registration shows confirmation with celebration animation
+5. Ticket status changes with smooth color/icon transition
+6. SOS button has prominent pulsing glow effect
+7. Wallet transactions slide in with appropriate icons
+8. Booking slots show availability with clear visual language
+9. Leaderboard ranks animate when positions change
 
-**Plans:** 3-4 plans
+**Plans:** TBD
 
 ---
 
-## Phase 7: Gamification
+### Phase 6: Polish & Optimization
 
-**Goal:** Implement skills ranking with ghost mode
+**Goal:** Final polish - performance optimization, accessibility, edge cases, loading states, error handling
 
-**Requirements:** SKIL-01 to SKIL-07
+**Depends on:** Phase 1-5
 
-**Success Criteria:**
-1. Scores submitted for events
-2. Anonymous leaderboard shows masked names
-3. User can view own rank
-4. Aggregation works across events
-
-**Plans:** 1-2 plans
-
----
-
-## Phase 8: Frontend Application
-
-**Goal:** Build responsive Next.js frontend with all features
-
-**Requirements:** FRNT-01 to FRNT-08, DASH-01 to DASH-05
+**Requirements:**
+- Animation performance optimization (will-change, GPU acceleration)
+- Reduced motion preference support
+- Loading states for all async operations
+- Error states with friendly animated messages
+- Success confirmations across the app
+- Keyboard navigation support
+- Screen reader optimizations
+- Final responsive testing
 
 **Success Criteria:**
-1. Responsive app with bottom navigation
-2. Hub dashboard with feature cards
-3. Role-based UI rendering
-4. All 16 features accessible from frontend
-5. Mobile-first design works
-6. Dark mode available
+1. All animations run at 60fps, no jank on mid-range devices
+2. Respects prefers-reduced-motion with instant fallback
+3. Every async operation shows skeleton or loading spinner
+4. Errors display friendly message with retry animation
+5. Success actions show brief celebratory feedback
+6. All interactive elements accessible via keyboard
+7. Screen readers announce dynamic content changes
+8. App works flawlessly from 320px to 4K displays
 
-**Plans:** 4-5 plans
+**Plans:** TBD
 
 ---
 
 ## Phase Dependencies
 
 ```
-Phase 1 (Setup)
-    │
-    ├── Phase 2 (Core) ──────────────┐
-    │                                │
-    ├── Phase 3 (Support)            │
-    │                                │
-    ├── Phase 4 (Services)           │
-    │                                │
-    ├── Phase 5 (Activities)         │
-    │                                │
-    ├── Phase 6 (Library/Credits)    │
-    │                                │
-    └── Phase 7 (Gamification)       │
-                                     │
-                    ┌────────────────┘
-                    ▼
-              Phase 8 (Frontend)
+Phase 1 (Design System)
+         │
+         ▼
+Phase 2 (Layout & Nav)
+         │
+    ┌────┴────┐
+    ▼         ▼
+Phase 3   Phase 4
+(Dashboard) (Academic)
+    │         │
+    └────┬────┘
+         ▼
+    Phase 5 (Services)
+         │
+         ▼
+    Phase 6 (Polish)
 ```
-
-Phases 2-7 can run in parallel (backend features are independent).
-Phase 8 depends on all backend phases being complete.
 
 ---
 
-## Execution Strategy
+## Tech Stack Additions
 
-1. **Phase 1**: Must complete first (foundation)
-2. **Phases 2-7**: Execute in parallel waves (3 agents max concurrent)
-3. **Phase 8**: Final integration, requires all backend ready
+| Addition | Purpose |
+|----------|---------|
+| **Framer Motion** | Page transitions, scroll animations, micro-interactions |
+| **clsx + tailwind-merge** | Conditional styling utilities |
+| **@radix-ui/colors** | Semantic color system for dark mode |
+
+## File Structure (New Components)
+
+```
+components/
+├── ui/
+│   ├── glass-card.tsx        # Glassmorphism card
+│   ├── animated-button.tsx   # Button with motion
+│   ├── skeleton.tsx          # Shimmer skeleton
+│   ├── gradient-border.tsx   # Animated gradient border
+│   └── noise-overlay.tsx     # Subtle texture
+├── motion/
+│   ├── page-transition.tsx   # Page wrapper
+│   ├── scroll-reveal.tsx     # Scroll animations
+│   ├── stagger-list.tsx      # Staggered list
+│   └── variants.ts           # Animation presets
+├── layout/
+│   ├── glass-sidebar.tsx     # Premium sidebar
+│   ├── animated-bottom-nav.tsx
+│   └── theme-toggle.tsx
+└── features/
+    └── [enhanced versions of existing]
+```
 
 ---
 
@@ -189,14 +280,50 @@ Phase 8 depends on all backend phases being complete.
 
 | Phase | Status | Plans | Completed |
 |-------|--------|-------|-----------|
-| Phase 1: Project Setup | 🔲 Not Started | - | 0/7 |
-| Phase 2: Core Backend | 🔲 Not Started | - | 0/15 |
-| Phase 3: Support Systems | 🔲 Not Started | - | 0/18 |
-| Phase 4: Services | 🔲 Not Started | - | 0/15 |
-| Phase 5: Activities | 🔲 Not Started | - | 0/17 |
-| Phase 6: Library & Credits | 🔲 Not Started | - | 0/17 |
-| Phase 7: Gamification | 🔲 Not Started | - | 0/7 |
-| Phase 8: Frontend | 🔲 Not Started | - | 0/13 |
+| Phase 1: Design System | 📋 Planned | 0/4 | - |
+| Phase 2: Layout & Nav | 🔲 Not Started | 0/2 | - |
+| Phase 3: Dashboard | 🔲 Not Started | 0/2 | - |
+| Phase 4: Core Features | 🔲 Not Started | 0/3 | - |
+| Phase 5: Service Features | 🔲 Not Started | 0/4 | - |
+| Phase 6: Polish | 🔲 Not Started | 0/2 | - |
 
 ---
-*Last updated: 2026-02-19*
+
+## Design Reference
+
+### Color System (Dark First)
+
+```css
+/* Primary Dark Background */
+--bg-primary: #0A0A0F;
+--bg-secondary: #12121A;
+--bg-tertiary: #1A1A24;
+
+/* Glass Effect */
+--glass-bg: rgba(255, 255, 255, 0.03);
+--glass-border: rgba(255, 255, 255, 0.08);
+--glass-blur: 20px;
+
+/* Accent Gradients */
+--gradient-primary: linear-gradient(135deg, #6366F1, #8B5CF6);
+--gradient-accent: linear-gradient(135deg, #14B8A6, #06B6D4);
+--gradient-glow: linear-gradient(135deg, #F59E0B, #EF4444);
+
+/* Text */
+--text-primary: #FFFFFF;
+--text-secondary: #94A3B8;
+--text-muted: #64748B;
+```
+
+### Animation Timing
+
+| Animation | Duration | Easing |
+|-----------|----------|--------|
+| Micro-interaction | 150ms | ease-out |
+| Hover effect | 200ms | ease-in-out |
+| Page transition | 300ms | cubic-bezier(0.4, 0, 0.2, 1) |
+| Scroll reveal | 400ms | ease-out |
+| Stagger delay | 50ms | - |
+
+---
+*Last updated: 2026-02-19 - Phase 1 Plans Created (4 plans, 4 waves)*
